@@ -43,17 +43,17 @@ export default function Index() {
       <div className="relative py-24 flex flex-col items-center justify-center min-h-screen h-full bg-gradient-to-r from-secondary-3 to-secondary-2 text-white">
         <div className="wrapper text-center">
           <div className="mb-8">
-            <Logo className="w-52 h-auto mx-auto"/>
+            <Logo className="w-40 sm:w-52 h-auto mx-auto"/>
           </div>
           <div className="mb-14">
-            <h1 className="text-4xl md:text-6xl font-bold mb-8">
+            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-bold mb-8">
               <span className="block text-primary">Create a referral program</span>
               <span><span className="italic text-secondary">without</span> breaking the bank.</span>
             </h1>
-            <p className="text-xl mx-auto">Launching soon. Follow along <a className="font-bold" href="https://twitter.com/richiemcilroy" target="_blank">@richiemcilroy</a> and watch me build <span className="font-bold">Reflio</span> live.</p>
+            <p className="text-lg sm:text-xl mx-auto">Launching soon. Follow along <a className="font-bold" href="https://twitter.com/richiemcilroy" target="_blank">@richiemcilroy</a> and watch me build <span className="font-bold">Reflio</span> live.</p>
           </div>
           <div>
-            <p className="text-xl font-bold mb-3">Sign up and be <span className="underline">one of the first</span> to get early access</p>
+            <p className="text-md sm:text-xl font-bold mb-3">Sign up and be <span className="underline">one of the first</span> to get early access</p>
             <form type="POST" onSubmit={handleSubscribe} className="md:flex md:items-center w-full max-w-xl mx-auto h-auto md:h-20 rounded-lg overflow-hidden shadow-lg border-4 border-primary outline-none focus:outline-none">
               <div className="flex items-center h-20 md:flex-grow">
                 <input type="email" id="email" name="email" placeholder="youremail@email.com" required className="w-auto flex-grow h-full border-none px-3 text-gray-700 text-md md:text-lg font-medium outline-none focus:outline-none"/>
