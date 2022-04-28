@@ -39,7 +39,6 @@ export default function Index() {
   
   return(
     <>
-      <SEOMeta/>
       <div className="relative py-24 flex flex-col items-center justify-center min-h-screen h-full bg-gradient-to-r from-secondary-3 to-secondary-2 text-white">
         <div className="wrapper text-center">
           <div className="mb-8">

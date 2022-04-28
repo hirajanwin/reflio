@@ -26,13 +26,13 @@ export default function MyApp({ Component, pageProps }) {
 
   return (
     <>
+      <SEOMeta/>
       <div>
         {
           router.pathname.indexOf('/dashboard') > -1 ?
             <UserContextProvider>
               <BrandContextProvider>
                 <Layout>
-                  <SEOMeta/>
                   <Component {...pageProps} />
                 </Layout>
               </BrandContextProvider>
@@ -40,7 +40,6 @@ export default function MyApp({ Component, pageProps }) {
           :
             <UserContextProvider>
               <Layout>
-                <SEOMeta/>
                 <Component {...pageProps} />
               </Layout>
             </UserContextProvider>
