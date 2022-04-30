@@ -30,7 +30,7 @@ export default function StripeSetupPage() {
             }
             <div>
               <a 
-                href={`https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=read_only&redirect_uri=${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/stripe-verify`}
+                href={`https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=read_only`}
                 target="_blank"
                 className="w-full text-center block py-3 px-8 bg-primary hover:bg-primary-2 transition-all text-lg font-bold rounded-lg text-white"
               >
