@@ -20,7 +20,7 @@ export default function Onboarding() {
   }, [userFinderLoaded, user]);
 
   const handleAddStripeAccount = async (stripeId) => {
-    // setRunningStripeFunction(true);
+    setRunningStripeFunction(true);
 
     console.log("function running here!!!!")
     console.log(stripeId);
@@ -56,7 +56,7 @@ export default function Onboarding() {
     }
   };
 
-  if(router?.query?.code && runningStripeFunction === false && user?.id && activeCompany){
+  if(router?.query?.code && runningStripeFunction === false && user?.id && activeCompany?.company_id){
     handleAddStripeAccount(router?.query?.code);
   }
 
