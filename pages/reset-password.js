@@ -66,7 +66,7 @@ const ForgotPassword = () => {
     <>
       <SEOMeta title="Reset Password"/>
       <div>
-        <div className="flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-md w-full space-y-8 bg-white rounded-xl p-10 shadow-lg border-4 border-primary-2">
             <div>
               <h1 className="text-center text-3xl font-extrabold text-gray-900">Reset your password</h1>

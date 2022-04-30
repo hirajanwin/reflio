@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import SEOMeta from '@/components/SEOMeta'; 
-import Logo from '@/components/icons/Logo'; 
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
 
@@ -39,11 +38,8 @@ export default function Index() {
   
   return(
     <>
-      <div className="relative py-24 flex flex-col items-center justify-center min-h-screen h-full bg-gradient-to-r from-secondary-3 to-secondary-2 text-white">
+      <div className="relative py-24">
         <div className="wrapper text-center">
-          <div className="mb-8">
-            <Logo className="w-40 sm:w-52 h-auto mx-auto"/>
-          </div>
           <div className="mb-14">
             <h1 className="text-3xl sm:text-4xl lg:text-7xl font-bold mb-8">
               <span className="block text-primary">Create a referral program</span>
@@ -57,7 +53,7 @@ export default function Index() {
               <div className="flex items-center h-20 md:flex-grow">
                 <input type="email" id="email" name="email" placeholder="youremail@email.com" required className="w-auto flex-grow h-full border-none px-3 text-gray-700 text-md md:text-lg font-medium outline-none focus:outline-none"/>
               </div>
-              <button disabled={subscribed === true ? true : false} type="submit" className={`${subscribed ? 'bg-primary-2' : 'bg-primary hover:bg-primary-2' } w-full h-full md:w-auto p-5 md:p-0 text-secondary-2 transition-all font-bold text-md md:text-lg px-3 md:px-5`}>{subscribed ? 'Your Subscribed' : 'Subscribe'}</button>
+              <button disabled={subscribed === true ? true : false} type="submit" className={`${subscribed ? 'bg-primary-2' : 'bg-primary hover:bg-primary-2' } w-full h-full md:w-auto p-5 md:p-0 transition-all font-bold text-md md:text-lg px-3 md:px-5`}>{subscribed ? 'Your Subscribed' : 'Subscribe'}</button>
             </form>
             
             {

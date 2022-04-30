@@ -47,18 +47,18 @@ export default function Layout({ children, meta: pageMeta }) {
             },
           }}
         />
-        {/* {
-          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-brand') === -1 &&
+        {
+          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 &&
           <Navbar />
         }
         { 
-          router.pathname === '/dashboard/add-brand' &&
+          router.pathname === '/dashboard/add-company' &&
           <SimpleNav/>
-        } */}
+        }
         {
           router.pathname.indexOf('/dashboard') === -1 ?
             <main id="skip">{children}</main>
-          : router.pathname === '/dashboard/add-brand' ?
+          : router.pathname === '/dashboard/add-company' ?
             <main id="skip">{children}</main>
           :
             <div className="h-screen flex overflow-hidden">
@@ -73,10 +73,10 @@ export default function Layout({ children, meta: pageMeta }) {
               </div>
             </div>
         }
-        {/* {
-          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-brand') === -1 &&
+        {
+          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 &&
           <Footer />
-        } */}
+        }
       </>
     </>
   );

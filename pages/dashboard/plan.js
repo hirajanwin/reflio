@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useUser, getSubmissions } from '@/utils/useUser';
-import { useBrand } from '@/utils/BrandContext';
+import { useCompany } from '@/utils/CompanyContext';
 import SEOMeta from '@/components/SEOMeta'; 
 import { postData } from '@/utils/helpers';
 import { getStripe } from '@/utils/stripe-client';
@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button';
 export default function PlanPage() {
   const router = useRouter();
   const { user, session, userFinderLoaded, planDetails } = useUser();
-  const { userBrandDetails } = useBrand();
+  const { userCompanyDetails } = useCompany();
   const [submissions, setSubmissions] = useState(null);
   const [priceIdLoading, setPriceIdLoading] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -74,7 +74,7 @@ export default function PlanPage() {
     if(userFinderLoaded){
       if (!user) router.replace('/signin');
     }
-  }, [userFinderLoaded, user, userBrandDetails]);
+  }, [userFinderLoaded, user, userCompanyDetails]);
 
   useEffect(() => {
     if (getSubmissions && user && submissions === null) {
@@ -106,10 +106,10 @@ export default function PlanPage() {
                 <span className={`${planDetails === 'free' ? 'bg-primary' : 'bg-secondary' } text-white py-1 px-3 text-xs rounded-xl ml-2 uppercase font-semibold`}>{planDetails === 'free' ? 'Free' : planDetails}</span>
               </div>
               <p className="text-lg mb-1"><span className="font-semibold">{submissions?.length} of {planDetails === 'free' ? '15' : '∞'}</span> submissions received.</p>
-              <p className="text-lg"><span className="font-semibold">{userBrandDetails?.length} of {planDetails === 'free' ? '1' : '∞'}</span> brands created.</p>
+              <p className="text-lg"><span className="font-semibold">{userCompanyDetails?.length} of {planDetails === 'free' ? '1' : '∞'}</span> companies created.</p>
               {
                 planDetails === 'free' &&
-                <p className="text-md bg-gray-100 rounded-xl p-4 mt-3">Upgrade to <span className="font-bold">PRO</span> for <span className="font-semibold">$14/month</span> to unlock unlimited submissions, unlimited brands, automatic console errors & more.</p>
+                <p className="text-md bg-gray-100 rounded-xl p-4 mt-3">Upgrade to <span className="font-bold">PRO</span> for <span className="font-semibold">$14/month</span> to unlock unlimited submissions, unlimited companies, automatic console errors & more.</p>
               }
             </div>
             <div className="border-t-4 p-6 bg-white flex items-center justify-start">

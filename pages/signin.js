@@ -55,7 +55,7 @@ const SignIn = () => {
       <>
         <SEOMeta title="Sign In"/>
         <div>
-          <div className="flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8 bg-white rounded-xl p-10 shadow-lg border-4 border-primary-2">
               <div>
                 <h1 className="text-center text-3xl font-extrabold text-gray-900">Sign In</h1>
@@ -101,7 +101,7 @@ const SignIn = () => {
                 <div className="text-center text-sm">
                   <a
                     href="#"
-                    className="font-medium hover:underline"
+                    className="font-medium hover:underline text-primary"
                     onClick={() => {
                       if (showPasswordInput) setPassword('');
                       setShowPasswordInput(!showPasswordInput);
@@ -155,7 +155,7 @@ const SignIn = () => {
                  */}
                 <button
                   type="button"
-                  className="flex align-center justify-center h-full min-h-full w-full font-medium rounded-lg m-0 p-3 px-5 border-2 hover:bg-accents-9 bg-white"
+                  className="flex align-center justify-center h-full min-h-full w-full font-medium rounded-lg m-0 p-3 px-5 border-2 hover:bg-accents-9 bg-white text-primary"
                   disabled={loading}
                   onClick={() => handleOAuthSignIn('google')}
                 >

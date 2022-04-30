@@ -10,8 +10,8 @@ export default function MyApp({ Component, pageProps }) {
   const UserContextProvider = dynamic(() =>
     import("@/utils/useUser").then((module) => module.UserContextProvider)
   );
-  const BrandContextProvider = dynamic(() =>
-    import("@/utils/BrandContext").then((module) => module.BrandContextProvider)
+  const CompanyContextProvider = dynamic(() =>
+    import("@/utils/CompanyContext").then((module) => module.CompanyContextProvider)
   );
   const router = useRouter();
   
@@ -31,11 +31,11 @@ export default function MyApp({ Component, pageProps }) {
         {
           router.pathname.indexOf('/dashboard') > -1 ?
             <UserContextProvider>
-              <BrandContextProvider>
+              <CompanyContextProvider>
                 <Layout>
                   <Component {...pageProps} />
                 </Layout>
-              </BrandContextProvider>
+              </CompanyContextProvider>
             </UserContextProvider>
           :
             <UserContextProvider>

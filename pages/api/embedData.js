@@ -1,4 +1,4 @@
-import { getBrandData } from '@/utils/useDatabase';
+import { getcompanyData } from '@/utils/useDatabase';
 import Cors from 'cors';
 
 // Initializing the cors middleware
@@ -29,7 +29,7 @@ const embedData = async (req, res) => {
 
   try {
 
-    const embedData = await getBrandData(body?.brand_id);
+    const embedData = await getcompanyData(body?.company_id);
     
     return res.json({ embed_data: embedData });
 

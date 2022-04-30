@@ -1,12 +1,13 @@
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useUser } from '@/utils/useUser';
-import LoadingDots from '@/components/ui/LoadingDots';
-import SEOMeta from '@/components/SEOMeta'; 
+import setupStepCheck from '@/utils/setupStepCheck';
+import LoadingDots from '@/components/ui/LoadingDots'; 
 
-export default function DashboardPage() {
+export default function SetupPage() {
   const router = useRouter();
   const { user, userFinderLoaded } = useUser();
+  setupStepCheck();
 
   useEffect(() => {
     if(userFinderLoaded){
@@ -15,11 +16,8 @@ export default function DashboardPage() {
   }, [userFinderLoaded, user]);
 
   return (
-    <>
-      <SEOMeta title="Dashboard"/>
-      <div className="pt-12 wrapper">
-        <LoadingDots/>
-      </div>
-    </>
+    <div className="pt-12 wrapper">
+      <LoadingDots/>
+    </div>
   );
 }

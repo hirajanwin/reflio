@@ -1,6 +1,6 @@
 const Button = (props) => {
   const ButtonType = props.href ? `a` : `button`;
-  let styles = 'relative inline-flex items-center border border-transparent text-xs md:text-lg font-semibold rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2';
+  let styles = 'relative inline-flex items-center border-2 border-transparent text-xs md:text-lg font-semibold rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all';
 
   //Sizing styles
   if(props.small){
@@ -13,9 +13,7 @@ const Button = (props) => {
 
   //Color styles
   if(props.secondary){
-    styles = styles + ' text-white bg-secondary border-secondary-2'
-  } else if(props.tertiary){
-    styles = styles + ' bg-tertiary border-tertiary-2'
+    styles = styles + ' text-white bg-secondary border-secondary-2 hover:bg-secondary-2'
   } else {
     styles = styles + ' bg-primary border-primary-2'
   }

@@ -7,9 +7,12 @@ const getAccountIdFromToken = async (req, res) => {
         grant_type: 'authorization_code',
         code: req.body.stripeCode
       });
+      console.log('response here 1')
+      console.log(response)
       return res.status(200).json({ stripe_id: response?.stripe_user_id });
     } catch (err) {
-      console.log(err);
+      console.log('errored here 1')
+      // console.log(err);
       res
         .status(500)
         .json({ error: { statusCode: 500, message: err.message } });

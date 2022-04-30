@@ -99,9 +99,9 @@ export const resetPassword = async (token, password) => {
 };
 
 //Get user account
-export const getBrands = async (userId) => {
+export const getCompanies = async (userId) => {
   const { data, error } = await supabase
-  .from('brands')
+  .from('companies')
   .select('*')
   .eq('id', userId)
 
@@ -109,11 +109,11 @@ export const getBrands = async (userId) => {
   return data;
 };
 
-export const newBrand = async (user, form) => {
-  const { data, error } = await supabase.from('brands').insert({
+export const newCompany = async (user, form) => {
+  const { data, error } = await supabase.from('companies').insert({
     id: user?.id,
-    display_name: form?.display_name,
-    domain_url: form?.domain_url
+    company_name: form?.company_name,
+    company_url: form?.company_url
     // loom_email: form?.loom_email !== null && form?.loom_email?.length > 0 ? form?.loom_email : null,
   });
 
@@ -124,11 +124,42 @@ export const newBrand = async (user, form) => {
   }
 };
 
-export const deleteBrand = async (id) => {
+//New Stripe Account
+export const newStripeAccount = async (userId, stripeId, companyId) => {
+  const getAccountDetails = await fetch('/api/get-account-details', {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      accountId: stripeId
+    })
+  }).then(function(response) {
+    return response.json();
+
+  }).then(function(data) {
+    return data;
+  });
+
   const { error } = await supabase
-    .from('brands')
+    .from('companies')
+    .update({
+      stripe_account_data: getAccountDetails?.data,
+      stripe_id: stripeId
+    }).eq('company_id', companyId);
+
+  if (error) {
+    console.log('first error was here')
+    return "error";
+  } else {
+    return "success";
+  }
+
+};
+
+export const deleteCompany = async (id) => {
+  const { error } = await supabase
+    .from('companies')
     .delete()
-    .match({ brand_id: id })
+    .match({ company_id: id })
 
     if (error) {
       return "error";
@@ -137,13 +168,13 @@ export const deleteBrand = async (id) => {
     }
 };
 
-export const getSubmissions = async (userId, brandId, submissionId) => {
+export const getSubmissions = async (userId, companyId, submissionId) => {
   
-  if(brandId !== null){
+  if(companyId !== null){
     const { data, error } = await supabase
     .from('submissions')
     .select('*')
-    .eq('brand_id', brandId)
+    .eq('company_id', companyId)
     .eq('id', userId)
     .order('created', { ascending: false })
   
@@ -162,7 +193,7 @@ export const getSubmissions = async (userId, brandId, submissionId) => {
     return data;
   }
 
-  if(submissionId === null && brandId === null){
+  if(submissionId === null && companyId === null){
     const { data, error } = await supabase
     .from('submissions')
     .select('*')
@@ -178,9 +209,9 @@ export const getSubmissions = async (userId, brandId, submissionId) => {
 
 export const disableEmails = async (id, type) => {
   const { error } = await supabase
-    .from('brands')
+    .from('companies')
     .update({ disable_emails: type})
-    .match({ brand_id: id })
+    .match({ company_id: id })
 
     if (error) {
       return "error";

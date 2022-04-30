@@ -18,6 +18,7 @@ $$ LANGUAGE plpgsql VOLATILE;
 * USERS
 * Note: This table contains user data. Users should only be able to view and update their own data.
 */
+create type user_types as enum ('platform', 'user');
 create table users (
   -- UUID from auth.users
   id uuid references auth.users not null primary key,
@@ -28,11 +29,57 @@ create table users (
   -- The customer's billing address, stored in JSON format.
   billing_address jsonb,
   -- Stores your customer's payment instruments.
-  payment_method jsonb
+  payment_method jsonb,
+  user_type user_types,
+  company_ids jsonb
 );
 alter table users enable row level security;
 create policy "Can view own user data." on users for select using (auth.uid() = id);
 create policy "Can update own user data." on users for update using (auth.uid() = id);
+
+/** 
+* Companies
+* Note: This table contains user data. Users should only be able to view and update their own data.
+*/
+create table companies (
+  -- UUID from auth.users
+  id uuid references auth.users not null,
+  company_id text primary key unique not null default generate_uid(15) unique,
+  company_name text,
+  company_url text,
+  company_image text,
+  company_meta jsonb,
+  company_currency text,
+  company_handle text unique,
+  company_affiliates jsonb,
+  stripe_account_data jsonb,
+  stripe_id text,
+  created timestamp with time zone default timezone('utc'::text, now()) not null
+);
+alter table companies enable row level security;
+create policy "Can view own user data." on companies for select using (auth.uid() = id);
+create policy "Can update own user data." on companies for update using (auth.uid() = id);
+create policy "Can insert own user data." on companies for insert with check (auth.uid() = id);
+create policy "Can delete own user data." on companies for delete using (auth.uid() = id);
+
+/**
+* Affiliate Invites
+* Note: this is a private table that contains a mapping of user IDs and affiliate invites.
+*/
+create table affiliate_invites (
+  -- UUID from auth.users
+  id uuid references auth.users not null,
+  invite_id text primary key unique not null default generate_uid(20) unique,
+  invite_email text,
+  company_id text,
+  accepted boolean,
+  created timestamp with time zone default timezone('utc'::text, now()) not null
+);
+alter table affiliate_invites enable row level security;
+create policy "Can view own user data." on affiliate_invites for select using (auth.uid() = id);
+create policy "Can update own user data." on affiliate_invites for update using (auth.uid() = id);
+create policy "Can insert own user data." on affiliate_invites for insert with check (auth.uid() = id);
+create policy "Can delete own user data." on affiliate_invites for delete using (auth.uid() = id);
 
 /**
 * This trigger automatically creates a user entry when a new user signs up via Supabase Auth.
@@ -61,44 +108,6 @@ create table customers (
 );
 alter table customers enable row level security;
 -- No policies as this is a private table that the user must not have access to.
-
-/** 
-* Brands
-* Note: This table contains user data. Users should only be able to view and update their own data.
-*/
-create table brands (
-  -- UUID from auth.users
-  id uuid references auth.users not null,
-  brand_id text primary key unique not null default generate_uid(15) unique,
-  display_name text,
-  domain_url text,
-  display_image text,
-  brand_settings jsonb, 
-  created timestamp with time zone default timezone('utc'::text, now()) not null
-);
-alter table brands enable row level security;
-create policy "Can view own user data." on brands for select using (auth.uid() = id);
-create policy "Can update own user data." on brands for update using (auth.uid() = id);
-create policy "Can insert own user data." on brands for insert with check (auth.uid() = id);
-create policy "Can delete own user data." on brands for delete using (auth.uid() = id);
-
-/** 
-* Social Accounts
-* Note: This table contains user data. Users should only be able to view and update their own data.
-*/
-create table socialaccounts (
-  -- UUID from auth.users
-  id uuid references auth.users not null,
-  brand_id text,
-  socialaccounts_id text primary key unique not null default generate_uid(15) unique,
-  metadata jsonb,
-  created timestamp with time zone default timezone('utc'::text, now()) not null
-);
-alter table socialaccounts enable row level security;
-create policy "Can view own user data." on socialaccounts for select using (auth.uid() = id);
-create policy "Can update own user data." on socialaccounts for update using (auth.uid() = id);
-create policy "Can insert own user data." on socialaccounts for insert with check (auth.uid() = id);
-create policy "Can delete own user data." on socialaccounts for delete using (auth.uid() = id);
 
 /** 
 * PRODUCTS

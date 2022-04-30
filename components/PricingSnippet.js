@@ -15,9 +15,9 @@ export default function PricingSnippet() {
               <p className="text-lg mb-2">Perfect for establised web apps and production environments.</p>
               <ul className="fancy-list mb-6">
                 <li className="text-xl font-semibold">Unlimited submissions</li>
-                <li className="text-xl font-semibold">Unlimited brands</li>
+                <li className="text-xl font-semibold">Unlimited companies</li>
                 <li className="text-xl font-semibold">Custom embed styling</li>
-                <li className="text-xl font-semibold">Remove Reflio branding</li>
+                <li className="text-xl font-semibold">Remove Reflio companying</li>
                 <li className="text-xl font-semibold">Automatically collect user console errors</li>
               </ul>
               <a
@@ -29,10 +29,10 @@ export default function PricingSnippet() {
             </div>
             <div className="w-full bg-white border-4 border-gray-200 shadow-xl rounded-xl p-8 text-left tracking-tight">
               <h3 className="text-3xl mb-2 font-bold">Free</h3>
-              <p className="text-lg text-gray-600 mb-2">100% free to setup and start collecting submissions. Suitable for indie makers and smaller brands.</p>
+              <p className="text-lg text-gray-600 mb-2">100% free to setup and start collecting submissions. Suitable for indie makers and smaller companies.</p>
               <ul className="fancy-list mb-6">
                 <li className="text-xl font-semibold">15 free submissions</li>
-                <li className="text-xl font-semibold">1 free brand</li>
+                <li className="text-xl font-semibold">1 free company</li>
               </ul>
               <a
                 href="/signup"

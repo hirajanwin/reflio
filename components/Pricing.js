@@ -13,10 +13,10 @@ export default function Pricing({ products }) {
   const { session, userLoaded, subscription } = useUser();
 
   const checklist = [
-    'Unlimited brands',
+    'Unlimited companies',
     'Unlimited submissions',
     'Custom embed styling',
-    'Remove Reflio branding',
+    'Remove Reflio companying',
     'Collect user console errors',
   ]
 

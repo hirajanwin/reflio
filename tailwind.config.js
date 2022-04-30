@@ -11,8 +11,6 @@ module.exports = {
         secondary: 'var(--secondary)',
         'secondary-2': 'var(--secondary-2)',
         'secondary-3': 'var(--secondary-3)',
-        tertiary: 'var(--tertiary)',
-        'tertiary-2': 'var(--tertiary-2)',
         'hover-1': 'var(--hover-1)',
         'hover-2': 'var(--hover-2)',
         'accents-0': 'var(--accents-0)',

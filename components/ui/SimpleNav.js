@@ -9,13 +9,13 @@ export default function SimpleNav() {
     <nav className="py-5 flex justify-between items-center wrapper bg-transparent">
       <Link href="/">
         <a>
-          <Logo className="h-8 w-auto mx-auto"/>
+          <Logo className="h-10 w-auto mx-auto"/>
         </a>
       </Link>
       <a
         onClick={() => signOut()}
         href="#"
-        className="underline text-md"
+        className="underline text-lg"
       >
         Sign out
       </a>
