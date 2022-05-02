@@ -41,7 +41,7 @@ export default function AdminNavItems() {
             {({ open }) => (
               <>
                 <div className="relative">
-                  <Listbox.Button className="relative w-full bg-white rounded-xl font-semibold pl-3 pr-10 py-3 flex text-left cursor-pointer focus:outline-none sm:text-sm">
+                  <Listbox.Button className="relative w-full bg-white rounded-xl font-semibold pl-3 pr-10 py-3 flex text-left cursor-pointer focus:outline-none sm:text-sm border-2 border-gray-300">
                     <span className="relative w-5 h-5 rounded-full block mr-2">
                       {
                         activeCompany?.display_image &&
@@ -70,8 +70,8 @@ export default function AdminNavItems() {
                           key={company?.company_id}
                           className={({ selected, active }) =>
                             classNames(
-                              selected && 'text-primary',
-                              'cursor-pointer select-none relative py-2 px-5'
+                              selected && 'text-primary py-2 pb-2',
+                              'cursor-pointer select-none relative py-2 pb-4 px-5 text-white'
                             )
                           }
                           value={company?.company_id}
@@ -85,7 +85,7 @@ export default function AdminNavItems() {
                                   <Image src={company?.display_image} objectFit='contain' layout='fill' />
                                 }
                               </span>
-                              <span className={classNames(selected ? 'font-semibold' : 'font-normal', 'block truncate text-md text-white')}>
+                              <span className={classNames(selected ? 'font-bold' : 'font-medium', 'block truncate text-m')}>
                                 {company?.company_name}
                               </span>
                             </div>

@@ -53,6 +53,7 @@ create table companies (
   company_handle text unique,
   company_affiliates jsonb,
   stripe_account_data jsonb,
+  domain_verified boolean default false,
   stripe_id text,
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -62,24 +63,49 @@ create policy "Can update own user data." on companies for update using (auth.ui
 create policy "Can insert own user data." on companies for insert with check (auth.uid() = id);
 create policy "Can delete own user data." on companies for delete using (auth.uid() = id);
 
-/**
-* Affiliate Invites
-* Note: this is a private table that contains a mapping of user IDs and affiliate invites.
+/** 
+* Campaigns
+* Note: This table contains user data. Users should only be able to view and update their own data.
 */
-create table affiliate_invites (
+
+create type commission_types as enum ('percentage', 'fixed');
+create table campaigns (
   -- UUID from auth.users
   id uuid references auth.users not null,
-  invite_id text primary key unique not null default generate_uid(20) unique,
-  invite_email text,
+  campaign_id text primary key unique not null default generate_uid(15) unique,
+  campaign_name text,
+  commission_type commission_types,
+  commission_value integer,
   company_id text,
-  accepted boolean,
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
-alter table affiliate_invites enable row level security;
-create policy "Can view own user data." on affiliate_invites for select using (auth.uid() = id);
-create policy "Can update own user data." on affiliate_invites for update using (auth.uid() = id);
-create policy "Can insert own user data." on affiliate_invites for insert with check (auth.uid() = id);
-create policy "Can delete own user data." on affiliate_invites for delete using (auth.uid() = id);
+alter table campaigns enable row level security;
+create policy "Can view own user data." on campaigns for select using (auth.uid() = id);
+create policy "Can update own user data." on campaigns for update using (auth.uid() = id);
+create policy "Can insert own user data." on campaigns for insert with check (auth.uid() = id);
+create policy "Can delete own user data." on campaigns for delete using (auth.uid() = id);
+
+/**
+* Affiliates
+* Note: this is a private table that contains a mapping of user IDs and affiliates.
+*/
+create table affiliates (
+  -- UUID from auth.users
+  id uuid references auth.users not null,
+  affiliate_id text primary key unique not null default generate_uid(20) unique,
+  invite_email text,
+  invited_user_id text,
+  campaign_id text,
+  company_id text,
+  accepted boolean default false,
+  created timestamp with time zone default timezone('utc'::text, now()) not null
+  accepted_date
+);
+alter table affiliates enable row level security;
+create policy "Can view own user data." on affiliates for select using (auth.uid() = id);
+create policy "Can update own user data." on affiliates for update using (auth.uid() = id);
+create policy "Can insert own user data." on affiliates for insert with check (auth.uid() = id);
+create policy "Can delete own user data." on affiliates for delete using (auth.uid() = id);
 
 /**
 * This trigger automatically creates a user entry when a new user signs up via Supabase Auth.

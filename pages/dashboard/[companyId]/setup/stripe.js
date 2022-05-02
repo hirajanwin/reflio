@@ -2,51 +2,59 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useUser } from '@/utils/useUser';
 import SetupProgress from '@/components/ui/SetupProgress'; 
+import StripeConnect from '@/components/icons/StripeConnect'; 
+import { useCompany } from '@/utils/CompanyContext';
 import SEOMeta from '@/components/SEOMeta'; 
 
 export default function StripeSetupPage() {
   const router = useRouter();
   const { user, userFinderLoaded } = useUser();
+  const { activeCompany } = useCompany();
 
   useEffect(() => {
     if(userFinderLoaded){
       if (!user) router.replace('/signin');
     }
   }, [userFinderLoaded, user]);
-
+  
   return (
     <>
-      <SEOMeta title="Add Stripe Account"/>
-      <div className="py-16">
-        <SetupProgress/>
+      <SEOMeta title="Connect Stripe Account"/>
+      <div className="py-12 border-b-4 border-gray-300">
         <div className="wrapper">
-          <div className="max-w-xl mx-auto bg-white rounded-xl p-8 shadow-lg">
-            <h1 className="text-2xl tracking-tight font-extrabold mb-6">
-              {router.query.reconfirm ? 'Reconnect your Stripe account' : 'First things first...' }
-            </h1>
-            {
-              router.query.reconfirm &&
-              <p className="mb-8">We recently changed our Stripe account. Because of this, for security and privacy reasons we politely ask that you reconnect your account below.</p>
-            }
-            <div>
-              <a 
-                href={`https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=read_only`}
-                target="_blank"
-                className="w-full text-center block py-3 px-8 bg-primary hover:bg-primary-2 transition-all text-lg font-bold rounded-lg text-white"
-              >
-                Connect Stripe Account
-              </a>
-            </div>
-          </div>
-          <div className="mt-4 text-center">
-            <a
-              onClick={() => signOut()}
-              href="#"
-              className="text-md underline"
-            >
-              Sign out
-            </a>
-          </div>
+          <SetupProgress/>
+        </div>
+      </div>
+      <div className="pt-12 mb-6">
+        <div className="wrapper">
+          <h1 className="text-2xl sm:text-3xl tracking-tight font-extrabold">Connect your Stripe account</h1>
+        </div>
+      </div>
+      <div className="wrapper">
+        <div className="rounded-xl bg-white max-w-2xl overflow-hidden shadow-lg border-4 border-gray-300 p-6">
+          {
+            activeCompany?.stripe_account_data !== null && activeCompany?.stripe_id !== null ?
+              <div>
+                <p className="text-lg mb-3">Your Stripe account is connected.</p>
+                <div className="mb-3">
+                  <p className="text-xl leading-6 font-semibold text-gray-900">Account name:</p>
+                  <p>{activeCompany?.stripe_account_data?.business_profile?.name}</p>
+                </div>
+                <div>
+                  <p className="text-xl leading-6 font-semibold text-gray-900">Stripe ID:</p>
+                  <p>{activeCompany?.stripe_id}</p>
+                </div>
+              </div>
+            :
+              <div>
+                <a 
+                  href={`https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=read_only&redirect_uri=${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/stripe-verify`}
+                  target="_blank"
+                >
+                  <StripeConnect className="w-52 h-auto"/>
+                </a>
+              </div>
+          }
         </div>
       </div>
     </>

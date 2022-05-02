@@ -150,9 +150,9 @@ const manageSubscriptionStatusChange = async (
     );
 };
 
-const getcompanyData = async (companyId) => {
+const getCampaignData = async (companyId) => {
   const { data, error } = await supabaseAdmin
-    .from('companies')
+    .from('campaigns')
     .select('*')
     .eq('company_id', companyId)
     .single();
@@ -161,64 +161,6 @@ const getcompanyData = async (companyId) => {
 
   return data;
 }
-
-//New submission
-const newSubmission = async (companyId, details, headers) => {  
-  if(companyId === null || details === null) return "error";
-
-  const { data, error } = await supabaseAdmin
-    .from('companies')
-    .select('*')
-    .eq('company_id', companyId)
-    .single();
-
-  if (error) return "error";
-
-  const companyData = data;
-
-  if(companyData){
-
-    const userId = companyData?.id;
-    const companyName = companyData?.company_name;
-    let submissionId = null;
-
-    const { data, error } = await supabaseAdmin.from('submissions').upsert({
-      id: userId,
-      company_id: companyId,
-      submission_text: details?.message !== null && details?.message?.length > 0 && details?.message !== 'none' ? details?.message : null,
-      submission_video: details?.url !== null && details?.url?.length > 0 && details?.url !== 'none' ? details?.url : null,
-      submission_type: details?.type !== null && details?.type?.length > 0 && details?.type !== 'none' ? details?.type : null,
-      submission_reference: details?.userId !== null && details?.userId?.length > 0 && details?.userId !== 'none' ? details?.userId : null,
-      metadata: {"origin": details?.companyUrl !== null && details?.companyUrl?.length > 0 ? details?.companyUrl : null, "user-agent": headers['user-agent'], "errors": details?.errorLogs !== null && details?.errorLogs?.length > 0 ? details?.errorLogs : null}
-    });
-    
-    if (error) return "error";
-
-    if(data[0]?.submission_id){
-      submissionId = data[0]?.submission_id;
-    }
-
-    const response = {
-      "userId": userId, 
-      "companyId": companyId, 
-      "subject": `[${companyName} #REF-${submissionId.substring(1, 4)}] New Submission 🥳`,
-      "type": 'submission',
-      "details": details,
-      "submissionId": submissionId
-    };
-
-    if(companyData?.disable_emails === true){
-      return "do not send";
-    } else {
-      return response;
-    }
-
-  } else {
-
-    return "error";
-
-  }
-};
 
 //New submission
 const addEmail = async (submissionId, submittedEmail) => {  
@@ -250,277 +192,56 @@ export const getAccountEmail = async (id) => {
   }
 }
 
-export const getCompanyName = async (id) => {
-  let { data } = await supabaseAdmin
-  .from('companies')
-  .select('company_name')
-  .eq('company_id', id)
-  .single();
-
-  if(data){
-    return data?.company_name ? data?.company_name : null;
-  } else {
-    return "error";
-  }
-}
-
-export const checkCompanyInvites = async (user) => {
-  let inviteData = null;
-
-  let { data } = await supabaseAdmin
-    .from('company_invites')
-    .select('*')
-    .eq('invite_email', user?.email)
-    .eq('accepted', false)
+export const getCompanyFromExternal = async (domain) => {
+  let { data, error } = await supabaseAdmin
+    .from('companies')
+    .select('company_id, domain_verified, company_url')
+    .eq('company_url', domain)
     .single();
 
-    if(data){
-      inviteData = data;
-      
-      if(inviteData?.invite_email === user?.email){
-    
-        let { data } = await supabaseAdmin
-        .from('companies')
-        .select('company_name')
-        .eq('company_id', inviteData?.company_id)
-        .single();
+    console.log('error here');
+    console.log(error);
 
-        console.log('company data::')
-        console.log(data)
-  
-        if(data){
-          inviteData['company_name'] = data?.company_name
-          console.log('company name: ', data?.company_name)
-          return inviteData;
-        }
-      }
-      
-    } else {
-      return "error";
-    }
-}
+    if (error) return "error";
 
-export const editCompany = async (companyId, editType, formData, userDetails) => {
-  let editData = {};
-  let companyUsers = null;
-  let companyInviteEmail = formData?.invite_email ? formData?.invite_email : null;
-  let companyUserEmail = formData?.user_email ? formData?.user_email : null;
-  let proceed = false;
+  if(data?.domain_verified === false){
 
-  //Get company data
-  let { data } = await supabaseAdmin
-    .from('companies')
-    .select('*')
-    .eq('company_id', companyId);
-
-  //If array, turn it into single object
-  if(data){
-    companyUsers = data[0]?.company_users;
-  }
-
-  //If edit type is invite
-  if(editType === 'invite' && companyInviteEmail !== null){
-
-    //Check if company already has users
-    if(companyUsers === null){
-      companyUsers = {
-        users: [
-          {
-            user_email: companyInviteEmail,
-            user_id: null,
-            user_permission: null,
-            invited: true,
-            accepted: false,
-            date: ((new Date()).toISOString())
-          }
-        ]
-      };
-    } else {
-      companyUsers?.users?.push(
-        {
-          user_email: companyInviteEmail,
-          user_id: null,
-          user_permission: null,
-          invited: true,
-          accepted: false,
-          date: ((new Date()).toISOString())
-        }
-      )
-    }
-    editData = {
-      company_users: companyUsers
-    };
-
-    //Add new company invite
     let { error } = await supabaseAdmin
-    .from('company_invites')
-    .insert({
-      id: userDetails?.id,
-      invite_email: companyInviteEmail,
-      company_id: companyId,
-      accepted: false,
-    })
-
-    if (error) return "error"
-    
-    proceed = true;
-  }
-
-  if(editType === 'delete' && companyUsers){
-    for (let i = 0; i < companyUsers?.users?.length; i++){
-      if (companyUsers?.users[i]?.user_email === companyUserEmail) {
-
-        //If user has not accepted invite, then delete the invite
-        if(companyUsers?.users[i]?.accepted === false){
-          let { error } = await supabaseAdmin
-          .from('company_invites')
-          .delete()
-          .match({ invite_email: companyUserEmail });
-
-          console.log("delete error:::")
-          console.log(error)
-
-          if (error) return "error";
-        }
-
-        //Delete user from users list
-        companyUsers?.users?.splice(i,1);
-
-        //Break the for loop once found
-        break;
-      }
-    }
-    editData = {
-      company_users: companyUsers
-    };
-    proceed = true;
-  }
-
-  if(formData?.company_name){
-    editData['company_name'] = formData?.company_name;
-  }
-
-  if(editData?.company_users?.users?.length === 0){
-    editData['company_users'] = null;
-  }
-
-  if(proceed !== true) return "error";
-
-  const { error } = await supabaseAdmin
     .from('companies')
-    .update(editData)
-    .eq('company_id', companyId);
+    .update({
+      domain_verified: true,
+    })
+    .eq('company_id', data?.company_id);
+
+    console.log('error here 2');
+    console.log(error);
+
+    if (error) return "error";
+  }
+
+  return "success";
+};
+
+
+export const inviteAffiliate = async (user, companyId, campaignId, emailInvites) => {
+  const { error } = await supabaseAdmin.from('affiliates').insert({
+    id: user?.id,
+    company_id: companyId,
+    campaign_id: campaignId,
+    invite_email: emailInvites
+  });
 
   if (error) {
-    console.log('errored here');
-    console.log(error)
     return "error";
   } else {
     return "success";
   }
 };
 
-export const acceptInvite = async (userEmail, companyId, userDetails) => {
-  if(userEmail === null || companyId === null || userDetails === null) return "error";
-
-  let foundMatch = false;
-  let companyData = null;
-
-  let { data } = await supabaseAdmin
-    .from('companies')
-    .select('*')
-    .eq('company_id', companyId);
-
-  if(data){
-    companyData = data[0]?.company_users;
-  }
-
-  if(companyData !== null){
-    companyData?.users?.forEach(user =>{
-      if(user?.user_email === userEmail){
-        foundMatch = true;
-        user['accepted'] = true;
-        user['user_id'] = userDetails?.id;
-      }
-    })
-  }
-
-  if(foundMatch === true && companyData !== null){
-    let { error } = await supabaseAdmin
-    .from('companies')
-    .update({
-      company_users: companyData
-    })
-    .eq('company_id', companyId);
-
-    if(error){
-      return "error";
-    } else {
-      let { error } = await supabaseAdmin
-      .from('users')
-      .update({
-        company_id: companyId
-      })
-      .eq('id', userDetails?.id);
-      if(error){
-        return "error";
-      } else {
-        let { error } = await supabaseAdmin
-        .from('company_invites')
-        .update({
-          accepted: true
-        })
-        .eq('invite_email', userDetails?.email);
-        if (error) return "error"
-      }
-    }
-  }
-
-  return "success";
-}
-
-export const companyData = async (userEmail, companyId, user) => {
-  if(userEmail === null || companyId === null) return "error";
-
-  let foundMatch = false;
-  let companyDataReturned = null;
-
-  let { data } = await supabaseAdmin
-    .from('companies')
-    .select('*')
-    .eq('company_id', companyId);
-
-  if(data){
-    companyDataReturned = data[0];
-  }
-
-  if(companyDataReturned?.company_users !== null){
-    companyDataReturned?.company_users?.users?.forEach(user =>{
-      if(user?.user_email === userEmail){
-        foundMatch = true;
-      }
-    })
-  }
-
-  if(user?.id === companyDataReturned?.id){
-    foundMatch = true;
-  }
-
-  if(foundMatch === false){
-    return "error";
-  }
-
-  return {
-    companyDataReturned
-  };
-}
-
 export {
   upsertProductRecord,
   upsertPriceRecord,
   createOrRetrieveCustomer,
   manageSubscriptionStatusChange,
-  getcompanyData,
-  newSubmission,
   addEmail
 };

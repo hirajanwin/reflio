@@ -1,21 +1,24 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useUser, deletecompany, disableEmails } from '@/utils/useUser';
+import { useUser, deleteCompany, disableEmails, editCompanyWebsite } from '@/utils/useUser';
 import { useCompany } from '@/utils/CompanyContext';
 import SEOMeta from '@/components/SEOMeta'; 
 import { Switch } from '@headlessui/react';
-import { classNames } from '@/utils/helpers';
+import { classNames, checkValidUrl } from '@/utils/helpers';
+import Button from '@/components/ui/Button'; 
 
 export default function companiesettingsPage() {
   const router = useRouter();
   const { user, userFinderLoaded } = useUser();
   const { activeCompany } = useCompany();
   const [errorMessage, setErrorMessage] = useState(false);
-  const [emailsEnabling, setEmailsEnabling] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [websiteUrlInput, setWebsiteUrlInput] = useState(null);
+  const [urlValid, setUrlValid] = useState(null);
   
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this company?')){
-      await deletecompany(router?.query?.companyId).then((result) => {
+      await deleteCompany(router?.query?.companyId).then((result) => {
         if(result === "success"){
           setErrorMessage(false);
           window.location.href = "/dashboard";
@@ -37,6 +40,37 @@ export default function companiesettingsPage() {
     });
   };
 
+  const handleWebsiteUpdate = async (e) => {
+
+    e.preventDefault();
+
+    if(loading === true){
+      return false;
+    }
+
+    const formData = new FormData(e.target);
+    const data = {};
+ 
+    for (let entry of formData.entries()) {
+      data[entry[0]] = entry[1];
+    }
+
+    setLoading(true);
+
+    await editCompanyWebsite(router?.query?.companyId, data).then((result) => {
+      if(result === "success"){
+        setErrorMessage(false);
+        router.replace(window.location.href);
+
+      } else {
+        setErrorMessage(true);
+      }
+
+      setLoading(false);
+    });
+
+  };
+
   useEffect(() => {
     if(userFinderLoaded){
       if (!user) router.replace('/signin');
@@ -52,19 +86,55 @@ export default function companiesettingsPage() {
         </div>
       </div>
       <div className="wrapper">
-        <div className="bg-white shadow-lg rounded-xl mt-5 max-w-3xl border-4 border-gray-200">
+        <form action="#" method="POST" onSubmit={handleWebsiteUpdate} className="bg-white shadow-lg rounded-xl mt-5 max-w-3xl border-4 border-gray-200">
           <div className="p-6 sm:p-8">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">Company ID</h3>
-            <div className="mt-2 max-w-2xl text-gray-500">
-              <p>{router?.query?.companyId}</p>
+            <div>
+              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">Company Website</h3>
+              <div>
+                <div className="mt-1 flex rounded-md shadow-sm">
+                  <input
+                    minLength="3"
+                    maxLength="25"
+                    required
+                    defaultValue={activeCompany?.company_url}
+                    placeholder="https://mywebsite.com"
+                    type="text"
+                    name="company_url"
+                    id="company_url"
+                    autoComplete="company_url"
+                    className="flex-1 block w-full min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 border-gray-300"
+                    onChange={e=>{setUrlValid(checkValidUrl(e.target.value)), urlValid ? setWebsiteUrlInput(e.target.value) : setWebsiteUrlInput(null)}}
+                  />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+          {
+            websiteUrlInput !== null && websiteUrlInput !== activeCompany?.company_url && urlValid &&
+            <div className="border-t-4 p-6 bg-white flex items-center justify-start">
+              <Button
+                medium
+                primary
+                disabled={loading}
+              >
+                <span>{loading ? 'Saving Changes...' : 'Save Changes'}</span>
+              </Button>
+            </div>
+          }
+          {
+            !urlValid && urlValid !== null &&
+            <div className="border-t-4 p-6 bg-white flex items-center justify-start">
+              <div className="bg-red-600 text-center p-4 rounded-lg">
+                <p className="text-white text-sm font-medium">The URL you entered is not valid. Please check it and try again.</p>
+              </div>
+            </div>
+          }
+        </form>
         <div className="bg-white shadow-lg rounded-xl mt-5 max-w-3xl border-4 border-gray-200">
           <div className="p-6 sm:p-8">
             <h3 className="text-lg leading-6 font-medium text-gray-900">Email notifications</h3>
             <div className="mt-2 max-w-2xl text-gray-500">
-              <p>When enabled, you will receive email notifications for this company whenever you receive a new submission.</p>
+              <p>When enabled, you will receive email notifications for this company whenever you receive a new sale via commission or affiliate signup.</p>
             </div>
             <div className="mt-5">
               <Switch
@@ -91,7 +161,7 @@ export default function companiesettingsPage() {
           <div className="p-6 sm:p-8">
             <h3 className="text-lg leading-6 font-medium text-gray-900">Danger zone</h3>
             <div className="mt-2 max-w-2xl text-gray-500">
-              <p>Once you delete your company, you will lose all data, including all submissions and company settings associated with it.</p>
+              <p>Once you delete your company, you will lose all data, including all campaigns and affiliates associated with it.</p>
             </div>
             <div className="mt-5">
               <button

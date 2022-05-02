@@ -13,6 +13,12 @@ export default function MyApp({ Component, pageProps }) {
   const CompanyContextProvider = dynamic(() =>
     import("@/utils/CompanyContext").then((module) => module.CompanyContextProvider)
   );
+  const CampaignContextProvider = dynamic(() =>
+    import("@/utils/CampaignContext").then((module) => module.CampaignContextProvider)
+  );
+  const AffiliateContextProvider = dynamic(() =>
+    import("@/utils/AffiliateContext").then((module) => module.AffiliateContextProvider)
+  );
   const router = useRouter();
   
   useEffect(() => {
@@ -32,9 +38,13 @@ export default function MyApp({ Component, pageProps }) {
           router.pathname.indexOf('/dashboard') > -1 ?
             <UserContextProvider>
               <CompanyContextProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
+                <CampaignContextProvider>
+                  <AffiliateContextProvider>
+                    <Layout>
+                      <Component {...pageProps} />
+                    </Layout>
+                  </AffiliateContextProvider>
+                </CampaignContextProvider>
               </CompanyContextProvider>
             </UserContextProvider>
           :

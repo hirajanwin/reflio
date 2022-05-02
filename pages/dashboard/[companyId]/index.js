@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useUser } from '@/utils/useUser';
 import { useCompany } from '@/utils/CompanyContext';
+import { useCampaign } from '@/utils/CampaignContext';
 import LoadingDots from '@/components/ui/LoadingDots';
 import SEOMeta from '@/components/SEOMeta'; 
 
@@ -9,6 +10,7 @@ export default function InnerDashboardPage() {
   const router = useRouter();
   const { user, userFinderLoaded } = useUser();
   const { activeCompany } = useCompany();
+  const { userCampaignDetails } = useCampaign();
 
   useEffect(() => {
     if(userFinderLoaded){
@@ -20,14 +22,13 @@ export default function InnerDashboardPage() {
     router.replace(`/dashboard/${router?.query?.companyId}/setup`);
   }
 
+  if(userCampaignDetails !== null && userCampaignDetails?.length > 0){
+    router.replace(`/dashboard/${router?.query?.companyId}/campaigns`);
+  }
+
   return (
     <>
       <SEOMeta title="Dashboard"/>
-      <div className="mb-12">
-        <div className="pt-10 wrapper">
-          <h1 className="text-2xl sm:text-3xl tracking-tight font-extrabold">Campaigns</h1>
-        </div>
-      </div>
       <div className="pt-12 wrapper">
         <LoadingDots/>
       </div>

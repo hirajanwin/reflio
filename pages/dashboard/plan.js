@@ -51,25 +51,6 @@ export default function PlanPage() {
     setLoading(false);
   };
 
-  const handleLtd = async (code) => {
-    setLoadingLtd(true);
-    const { subscriptionId, error } = await postData({
-      url: '/api/create-lifetime-deal',
-      token: session.access_token,
-      data: { couponCode: code }
-    });
-    if (error){
-      alert(error.message);
-      setLoadingLtd(false);
-    }
-    if(subscriptionId){
-      setLoadingLtd(false);
-      if (window.confirm('Your lifetime deal was successfully activated. Your plan may take a couple of minutes to update.')){
-        window.location.href = window.location.href;
-      }
-    }
-  };
-
   useEffect(() => {
     if(userFinderLoaded){
       if (!user) router.replace('/signin');
@@ -115,50 +96,13 @@ export default function PlanPage() {
             <div className="border-t-4 p-6 bg-white flex items-center justify-start">
               <Button
                 large
-                secondary
+                primary
                 onClick={e=>{  planDetails === 'free' ? handleCheckout('price_1KRfK8JFcHkAGyDvn1msohog') : redirectToCustomerPortal() }}
               >
                 {loading ? 'Loading...' : planDetails === 'free' ? 'Upgrade to PRO' : 'Manage Plan' }
               </Button>
             </div>
           </div>
-          {
-            planDetails === 'free' &&
-            <div className="rounded-xl bg-white max-w-2xl overflow-hidden shadow-lg border-4 border-gray-300 mt-12">
-              <div className="p-6">
-                <div className="flex items-center mb-2">
-                  <h2 className="text-xl leading-6 font-semibold text-gray-900">Lifetime Deal</h2>
-                </div>
-                <div className="sm:col-span-12">
-                  <label htmlFor="ltdCode" className="text-lg mb-2">
-                    Have a lifetime deal code? Enter it below to activate your plan.
-                  </label>
-                  <div className="mt-2 flex rounded-lg">
-                    <input
-                      onInput={e=>{e.target.value.length > 0 ? setLtdInput(e.target.value) : setLtdInput(null)}}
-                      minlength="3"
-                      maxLength="50"
-                      required
-                      placeholder="Enter code here"
-                      type="text"
-                      name="ltdCode"
-                      id="ltdCode"
-                      className="flex-1 block w-full min-w-0 p-3 rounded-lg focus:outline-none sm:text-sm border-2 border-gray-300"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="p-6 bg-gray-200 flex items-center justify-start">
-                <Button
-                  large
-                  secondary
-                  onClick={e=>{ ltdInput !== null && handleLtd(ltdInput) }}
-                >
-                  {loadingLtd ? 'Activating...' : 'Activate'}
-                </Button>
-              </div>
-            </div>
-          }
         </div>
       </div>
     </>

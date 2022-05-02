@@ -109,12 +109,34 @@ export const getCompanies = async (userId) => {
   return data;
 };
 
+//Get user campaigns
+export const getCampaigns = async (companyId) => {
+  const { data, error } = await supabase
+  .from('campaigns')
+  .select('*')
+  .eq('company_id', companyId)
+
+  if(error) return error; 
+  return data;
+};
+
+//Get user campaigns
+export const getAffiliates = async (companyId) => {
+  const { data, error } = await supabase
+  .from('affiliates')
+  .select('*')
+  .eq('company_id', companyId)
+
+  if(error) return error; 
+  return data;
+};
+
 export const newCompany = async (user, form) => {
   const { data, error } = await supabase.from('companies').insert({
     id: user?.id,
     company_name: form?.company_name,
-    company_url: form?.company_url
-    // loom_email: form?.loom_email !== null && form?.loom_email?.length > 0 ? form?.loom_email : null,
+    company_url: form?.company_url,
+    domain_verified: false
   });
 
   if (error) {
@@ -122,6 +144,36 @@ export const newCompany = async (user, form) => {
   } else {
     return data;
   }
+};
+
+export const newCampaign = async (user, form, companyId) => {
+  const { data, error } = await supabase.from('campaigns').insert({
+    id: user?.id,
+    campaign_name: form?.campaign_name,
+    commission_type: form?.commission_type,
+    commission_value: form?.commission_value,
+    company_id: companyId
+  });
+
+  if (error) {
+    throw error;
+  } else {
+    return "success";
+  }
+};
+
+export const editCampaign = async (companyId, form) => {
+  const { error } = await supabase
+    .from('campaigns')
+    .update({
+      campaign_name: form?.commission_name,
+      commission_type: form?.commission_type,
+      commission_value: form?.commission_value,
+    })
+    .eq('company_id', companyId);
+  if (error) return "error";
+
+  return "success";
 };
 
 //New Stripe Account
@@ -168,6 +220,22 @@ export const deleteCompany = async (id) => {
     }
 };
 
+export const editCurrency = async (companyId, data) => {
+  if(!data?.company_currency){
+    return "error";
+  }
+
+  const { error } = await supabase
+    .from('companies')
+    .update({
+      company_currency: data?.company_currency
+    })
+    .eq('company_id', companyId);
+  if (error) return "error";
+
+  return "success";
+};
+
 export const getSubmissions = async (userId, companyId, submissionId) => {
   
   if(companyId !== null){
@@ -205,6 +273,22 @@ export const getSubmissions = async (userId, companyId, submissionId) => {
   }
 
   return null;
+};
+
+export const editCompanyWebsite = async (id, form) => {
+  const { error } = await supabase
+    .from('companies')
+    .update({ 
+      company_url: form?.company_url,
+      domain_verified: false
+    })
+    .match({ company_id: id })
+
+    if (error) {
+      return "error";
+    } else {
+      return "success";
+    }
 };
 
 export const disableEmails = async (id, type) => {

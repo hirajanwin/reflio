@@ -15,7 +15,7 @@ const Button = (props) => {
   if(props.secondary){
     styles = styles + ' text-white bg-secondary border-secondary-2 hover:bg-secondary-2'
   } else {
-    styles = styles + ' bg-primary border-primary-2'
+    styles = styles + ' bg-primary border-primary-2 hover:bg-primary-2'
   }
 
   return(

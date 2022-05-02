@@ -7,12 +7,12 @@ export default function SetupProgress() {
   const companyId = router?.query?.companyId ? router?.query?.companyId : null;
 
   let steps = [
-    { name: !activeCompany ? 'Add Company' : 'Edit Company', href: !activeCompany ? '/dashboard/add-company' : `/dashboard/${activeCompany?.company_id}/settings`, status: 'upcoming' },
+    { name: !activeCompany ? 'Add Company' : 'Edit company', href: !activeCompany ? '/dashboard/add-company' : `/dashboard/${activeCompany?.company_id}/settings`, status: 'upcoming' },
     { name: 'Connect Stripe', href: !companyId ? '/dashboard' : `/dashboard/${companyId}/setup/stripe`, status: 'upcoming' },
-    { name: 'Currency / Timezone', href: !companyId ? '/dashboard' : `/dashboard/${companyId}/setup/currency`, status: 'upcoming' },
-    { name: 'Create a Campaign', href: !companyId ? '/dashboard' : `/dashboard/${companyId}/setup/campaign`, status: 'upcoming' },
+    { name: 'Choose a currency', href: !companyId ? '/dashboard' : `/dashboard/${companyId}/setup/currency`, status: 'upcoming' },
+    { name: 'Create a campaign', href: !companyId ? '/dashboard' : `/dashboard/${companyId}/setup/campaign`, status: 'upcoming' },
     { name: 'Setup Reflio', href: !companyId ? '/dashboard' : `/dashboard/${companyId}/setup/add`, status: 'upcoming' },
-    { name: 'Verify Setup', href: !companyId ? '/dashboard' : `/dashboard/${companyId}/setup/verify`, status: 'upcoming' },
+    { name: 'Verify setup', href: !companyId ? '/dashboard' : `/dashboard/${companyId}/setup/verify`, status: 'upcoming' },
   ]
 
   return(
@@ -23,9 +23,9 @@ export default function SetupProgress() {
             {step.status === 'complete' ? (
               <a
                 href={step.href}
-                className="group pl-4 py-2 flex flex-col border-l-4 border-indigo-600 hover:border-indigo-800 md:pl-0 md:pt-4 md:pb-0 md:border-l-0 md:border-t-4"
+                className="group pl-4 py-2 flex flex-col border-l-4 border-primary hover:border-primary-2 md:pl-0 md:pt-4 md:pb-0 md:border-l-0 md:border-t-8"
               >
-                <span className="text-xs text-indigo-600 font-semibold tracking-wide uppercase group-hover:text-indigo-800">
+                <span className="text-xs font-semibold tracking-wide uppercase">
                   {step.id}
                 </span>
                 <span className="text-sm font-medium">{step.name}</span>
@@ -33,16 +33,16 @@ export default function SetupProgress() {
             ) : step.href === router?.asPath ? (
               <a
                 href={step.href}
-                className="pl-4 py-2 flex flex-col border-l-4 border-indigo-600 md:pl-0 md:pt-4 md:pb-0 md:border-l-0 md:border-t-4"
+                className="pl-4 py-2 flex flex-col border-l-4 border-primary md:pl-0 md:pt-4 md:pb-0 md:border-l-0 md:border-t-8"
                 aria-current="step"
               >
-                <span className="text-xs text-indigo-600 font-semibold tracking-wide uppercase">{step.id}</span>
+                <span className="text-xs font-semibold tracking-wide uppercase">{step.id}</span>
                 <span className="text-sm font-medium">{step.name}</span>
               </a>
             ) : (
               <a
                 href={step.href}
-                className="group pl-4 py-2 flex flex-col border-l-4 border-gray-200 hover:border-gray-300 md:pl-0 md:pt-4 md:pb-0 md:border-l-0 md:border-t-4"
+                className="group pl-4 py-2 flex flex-col border-l-4 border-gray-200 hover:border-gray-300 md:pl-0 md:pt-4 md:pb-0 md:border-l-0 md:border-t-8"
               >
                 <span className="text-xs text-gray-500 font-semibold tracking-wide uppercase group-hover:text-gray-700">
                   {step.id}
