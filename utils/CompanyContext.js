@@ -31,11 +31,17 @@ export const CompanyContextProvider = (props) => {
   }
   
   if(userCompanyDetails !== null && userCompanyDetails?.length > 0 && router?.asPath === '/dashboard'){
-    router.replace('/dashboard/'+userCompanyDetails[0]?.company_id+'');
+    userCompanyDetails?.filter(company=>company?.active_company === true)?.length > 0 ?      
+      router.replace('/dashboard/'+userCompanyDetails?.filter(company=>company?.active_company === true)[0].company_id+'')
+    : 
+      router.replace('/dashboard/'+userCompanyDetails[0].company_id+'')
   }
 
   if(userCompanyDetails !== null && userCompanyDetails?.length > 0 && router?.asPath?.includes('undefined')){
-    router.replace('/dashboard/'+userCompanyDetails[0]?.company_id+'');
+    userCompanyDetails?.filter(company=>company?.active_company === true)?.length > 0 ?      
+      router.replace('/dashboard/'+userCompanyDetails?.filter(company=>company?.active_company === true)[0].company_id+'')
+    : 
+      router.replace('/dashboard/'+userCompanyDetails[0].company_id+'')
   }
 
   if(userCompanyDetails === null && router?.asPath?.includes('undefined')){
@@ -43,7 +49,7 @@ export const CompanyContextProvider = (props) => {
     router.replace('/signin');
   }
 
-  let activeCompany = router?.query?.companyId ? userCompanyDetails?.filter(company => company?.company_id === router?.query?.companyId) : Array.isArray(userCompanyDetails) ? userCompanyDetails[0] : userCompanyDetails;
+  let activeCompany = router?.query?.companyId ? userCompanyDetails?.filter(company => company?.company_id === router?.query?.companyId) : userCompanyDetails?.filter(company => company?.active_company === true)?.length > 0 ? userCompanyDetails?.filter(company => company?.active_company === true) : Array.isArray(userCompanyDetails) ? userCompanyDetails[0] : userCompanyDetails;
   if(Array.isArray(activeCompany)){
     activeCompany = activeCompany[0]
   }

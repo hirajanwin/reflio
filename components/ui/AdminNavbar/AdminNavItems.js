@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { useUser } from '@/utils/useUser';
+import { useUser, handleActiveCompany } from '@/utils/useUser';
 import { useRouter } from 'next/router';
 import { classNames } from '@/utils/helpers';
 import { useCompany } from '@/utils/CompanyContext';
@@ -32,12 +32,22 @@ export default function AdminNavItems() {
   const secondaryNavigation = [
     { name: 'Changelog', href: '/changelog' },
   ];
+
+  const handleCompanySwitch = async (companyId) => {
+    if(!companyId) return false;
+
+    await handleActiveCompany(companyId).then((result) => {
+      if(result === "success"){
+        router.replace(`/dashboard/${companyId}`);
+      }
+    });
+  };
   
   return(
     <>
       <nav className="mt-8 flex-1 flex flex-col overflow-y-auto" aria-label="Sidebar">
         <div className="px-4 space-y-1 pb-6">
-          <Listbox onChange={value=>{router.replace('/dashboard/'+value+'')}} value={activeCompany?.company_id}>
+          <Listbox onChange={value=>{handleCompanySwitch(value)}} value={activeCompany?.company_id}>
             {({ open }) => (
               <>
                 <div className="relative">
@@ -164,6 +174,7 @@ export default function AdminNavItems() {
             >
               Sign out
             </button>
+            <a className="items-center px-2 py-2 text-md font-semibold rounded-md" href="https://affiliates.reflio.com" target="_blank">Affiliate Dashboard</a>
           </div>
         </div>
       </nav>
