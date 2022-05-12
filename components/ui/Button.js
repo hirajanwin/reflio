@@ -1,14 +1,14 @@
 const Button = (props) => {
   const ButtonType = props.href ? `a` : `button`;
-  let styles = 'relative inline-flex items-center border-2 border-transparent text-xs md:text-lg font-semibold rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all';
+  let styles = 'relative inline-flex items-center border-2 border-transparent font-semibold rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all';
 
   //Sizing styles
   if(props.small){
-    styles = styles + ' px-4 py-2'
-  } if(props.medium){
-    styles = styles + ' px-5 py-3'
+    styles = styles + ' px-4 py-2 text-xs md:text-sm'
+  } else if(props.medium){
+    styles = styles + ' px-6 py-3 text-xs md:text-lg'
   } else {
-    styles = styles + ' px-8 py-3'
+    styles = styles + ' px-8 py-3 text-xs md:text-xl'
   }
 
   //Color styles

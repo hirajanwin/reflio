@@ -222,7 +222,6 @@ export const getCompanyFromExternal = async (domain) => {
   return "success";
 };
 
-
 export const inviteAffiliate = async (user, companyId, campaignId, emailInvites) => {
   const { error } = await supabaseAdmin.from('affiliates').insert({
     id: user?.id,
@@ -238,6 +237,48 @@ export const inviteAffiliate = async (user, companyId, campaignId, emailInvites)
   }
 };
 
+export const verifyReferral = async (referralCode, companyId) => {
+  let referralData = null;
+  let { data, error } = await supabaseAdmin
+    .from('affiliates')
+    .select('*')
+    .eq('company_id', companyId)
+    .eq('referral_code', referralCode)
+    .single();
+  
+  if(data){
+    referralData = data;
+  } else {
+    let { data, error } = await supabaseAdmin
+      .from('affiliates')
+      .select('*')
+      .eq('company_id', companyId)
+      .eq('affiliate_id', referralCode)
+      .single();
+
+    if(data){
+      referralData = data;
+    }
+  }
+  
+  
+  if (error || referralData === null) {
+    return "error";
+  } else {
+    return referralData;
+  }
+};
+
+export const fireRecordImpression = async (id) => {
+  const { error } = await supabaseAdmin.rpc('referralimpression', { x: 1, affiliateid: id })
+
+  if (error) {
+    return "error";
+  } else {
+    return "success";
+  }
+};
+
 export {
   upsertProductRecord,
   upsertPriceRecord,
@@ -245,3 +286,4 @@ export {
   manageSubscriptionStatusChange,
   addEmail
 };
+

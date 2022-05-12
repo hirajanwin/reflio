@@ -6,8 +6,10 @@ import { useCampaign } from '@/utils/CampaignContext';
 import LoadingDots from '@/components/ui/LoadingDots';
 import SEOMeta from '@/components/SEOMeta'; 
 import Button from '@/components/ui/Button'; 
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import toast from 'react-hot-toast';
 
-export default function InnerDashboardPage() {
+export default function CampaignsPage() {
   const router = useRouter();
   const { user, userFinderLoaded } = useUser();
   const { activeCompany } = useCompany();
@@ -18,7 +20,7 @@ export default function InnerDashboardPage() {
       if (!user) router.replace('/signin');
     }
   }, [userFinderLoaded, user, activeCompany]);
-
+  
   return (
     <>
       <SEOMeta title="Campaigns"/>
@@ -49,10 +51,10 @@ export default function InnerDashboardPage() {
                               <th scope="col" className="py-3.5 pl-4 pr-4 text-left text-sm font-semibold sm:pl-6">
                                 Campaign
                               </th>
-                              <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold">
+                              <th scope="col" className="px-4 py-3.5 text-sm font-semibold text-center">
                                 Affiliates
                               </th>
-                              <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold0">
+                              <th scope="col" className="px-4 py-3.5 text-sm font-semibold text-center">
                                 Revenue
                               </th>
                             </tr>
@@ -61,13 +63,21 @@ export default function InnerDashboardPage() {
                             {userCampaignDetails?.map((campaign) => (
                               <tr key={campaign?.campaign_id} className="divide-x-4 divide-gray-200">
                                 <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-6">
-                                  <p className="text-xl mb-2 font-semibold">{campaign?.campaign_name}</p>
+                                  <p className="text-xl mb-2 font-semibold"><a className="underline" href={`/dashboard/${router?.query?.companyId}/campaigns/${campaign?.campaign_id}`}>{campaign?.campaign_name}</a></p>
                                   <p className="text-md">{campaign?.commission_type === 'percentage' ? `${campaign?.commission_value}% commission on all paid referrals` : `${activeCompany?.company_currency}${campaign?.commission_value} commission on all paid referrals`}</p>
+                                  <div className="mt-3">
+                                    <p className="text-gray-500">
+                                      <span>New affiliates can join at&nbsp;</span>
+                                      <CopyToClipboard text={`https://affiliates.reflio.com/invite/${campaign?.campaign_id}`} onCopy={() => toast.success('URL copied to clipboard')}>
+                                        <button className="font-semibold underline" href={`https://affiliates.reflio.com/invite/${campaign?.campaign_id}`}>{`https://affiliates.reflio.com/invite/${campaign?.campaign_id}`}</button>
+                                      </CopyToClipboard>
+                                    </p>
+                                  </div> 
                                 </td>
-                                <td className="whitespace-nowrap p-4 text-sm">
+                                <td className="whitespace-nowrap p-4 text-sm text-center">
                                   <a href="#" className="underline font-semibold">0 affiliates</a>
                                 </td>
-                                <td className="whitespace-nowrap p-4 text-sm">$0 USD</td>
+                                <td className="whitespace-nowrap p-4 text-sm text-center">$0 USD</td>
                               </tr>
                             ))}
                           </tbody>

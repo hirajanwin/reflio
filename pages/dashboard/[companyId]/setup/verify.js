@@ -5,11 +5,14 @@ import SetupProgress from '@/components/ui/SetupProgress';
 import Button from '@/components/ui/Button'; 
 import SEOMeta from '@/components/SEOMeta'; 
 import { useCompany } from '@/utils/CompanyContext';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
 
 export default function TrackingSetupPage() {
   const router = useRouter();
   const { user, userFinderLoaded } = useUser();
   const { activeCompany } = useCompany();
+  const {width, height} = useWindowSize();
 
   useEffect(() => {
     if(userFinderLoaded){
@@ -22,7 +25,7 @@ export default function TrackingSetupPage() {
  <script async src='https://reflio.com/go.js' data-reflio='${router?.query?.companyId}'></script>`;
   
   return (
-    <>
+    <div>
       <SEOMeta title="Verify Setup"/>
       <div className="py-12 border-b-4 border-gray-300">
         <div className="wrapper">
@@ -68,7 +71,7 @@ export default function TrackingSetupPage() {
               :
                 <Button
                   small
-                  primary
+                  secondary
                   href={`http://${activeCompany?.company_url}?reflioVerify=true`}
                 >
                   <span>Verify on website</span>
@@ -77,6 +80,15 @@ export default function TrackingSetupPage() {
           </div>
         </div>
       </div>
-    </>
+      {
+        activeCompany?.domain_verified === true &&
+        <div className="w-full h-full fixed top-0 left-0 z-10 pointer-events-none">
+          <Confetti
+            width={width}
+            height={height}
+          />
+        </div>
+      }
+    </div>
   );
 }

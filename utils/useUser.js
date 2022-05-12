@@ -175,30 +175,23 @@ export const handleActiveCompany = async (switchedCompany) => {
 };
 
 export const newCampaign = async (user, form, companyId) => {
-  const { data, error } = await supabase.from('campaigns').insert({
-    id: user?.id,
-    campaign_name: form?.campaign_name,
-    commission_type: form?.commission_type,
-    commission_value: form?.commission_value,
-    company_id: companyId
-  });
+  let formFields = form;
+  formFields.id = user?.id;
+  formFields.company_id = companyId;
+  
+  const { error } = await supabase.from('campaigns').insert(formFields);
 
-  if (error) {
-    throw error;
-  } else {
-    return "success";
-  }
+  if (error) return "error";
+
+  return "success";
 };
 
-export const editCampaign = async (companyId, form) => {
+export const editCampaign = async (campaignId, form) => {  
   const { error } = await supabase
     .from('campaigns')
-    .update({
-      campaign_name: form?.commission_name,
-      commission_type: form?.commission_type,
-      commission_value: form?.commission_value,
-    })
-    .eq('company_id', companyId);
+    .update(form)
+    .eq('campaign_id', campaignId);
+
   if (error) return "error";
 
   return "success";
@@ -345,27 +338,29 @@ export const archiveSubmission = async (id, type) => {
     }
 };
 
-// //Upload logo to log
-// export const uploadLogoImage = async (stripeId, file) => {
-//   const modifiedId = stripeId?.replace('_', '-');
-//   const { data, error } = await supabase.storage
-//   .from('assets')
-//   .upload(`${modifiedId}.png`, file, {
-//     cacheControl: '0',
-//     upsert: true
-//   })
+//Upload logo to log
+export const uploadLogoImage = async (companyId, file) => {
+  const modifiedId = companyId?.replace('_', '-');
+  const { data, error } = await supabase.storage
+  .from('company-assets')
+  .upload(`${modifiedId}.png`, file, {
+    cacheControl: '0',
+    upsert: true
+  })
 
-//   if (error) return error;
+  console.log(error)
 
-//   if(data?.Key){
-//     const { error } = await supabase
-//     .from('stripe_accounts')
-//     .update({
-//       logo_url: data?.Key,
-//     }).eq('stripe_id', stripeId);
+  if (error) return error;
 
-//     if (error) return error;
-//   }
+  if(data?.Key){
+    const { error } = await supabase
+    .from('companies')
+    .update({
+      company_image: data?.Key,
+    }).eq('company_id', companyId);
+
+    if (error) return error;
+  }
   
-//   return data;
-// };
+  return data;
+};

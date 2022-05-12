@@ -130,7 +130,7 @@ export default function AdminNavItems() {
               key={item.name}
               href={item.href}
               className={classNames(
-                router?.asPath === item.href && 'bg-primary border-primary-2 hover:bg-primary-2 hover-opacity-100',
+                router?.asPath?.includes(item.href) && 'bg-primary border-primary-2 hover:bg-primary-2 hover-opacity-100',
                 'flex items-center p-2 text-lg font-semibold rounded-md border-2 border-transparent hover:opacity-70'
               )}
               aria-current={item.current ? 'page' : undefined}

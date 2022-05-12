@@ -31,7 +31,8 @@ create table users (
   -- Stores your customer's payment instruments.
   payment_method jsonb,
   user_type user_types,
-  company_ids jsonb
+  company_ids jsonb,
+  paypal_email text default null
 );
 alter table users enable row level security;
 create policy "Can view own user data." on users for select using (auth.uid() = id);
@@ -78,6 +79,9 @@ create table campaigns (
   commission_type commission_types,
   commission_value integer,
   company_id text,
+  cookie_window integer default 60,
+  commission_period integer,
+  minimum_days_payout integer default 30,
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
 alter table campaigns enable row level security;
@@ -99,8 +103,9 @@ create table affiliates (
   campaign_id text,
   company_id text,
   accepted boolean default false,
-  created timestamp with time zone default timezone('utc'::text, now()) not null
-  accepted_date
+  created timestamp with time zone default timezone('utc'::text, now()) not null,
+  impressions integer default 0,
+  referral_code text default null
 );
 alter table affiliates enable row level security;
 create policy "Can view own user data." on affiliates for select using (auth.uid() = id);
@@ -235,3 +240,15 @@ create policy "Can only view own subs data." on subscriptions for select using (
  */
 drop publication if exists supabase_realtime;
 create publication supabase_realtime for table products, prices;
+
+/**
+ * Record referral impression function
+ */
+create function referralimpression (x int, affiliateid text) 
+returns void as
+$$
+  update affiliates 
+  set impressions = impressions + x
+  where affiliate_id = affiliateid
+$$ 
+language sql volatile;

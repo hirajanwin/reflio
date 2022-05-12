@@ -53,10 +53,13 @@ export default function InnerDashboardPage() {
                                 Campaign
                               </th>
                               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">
-                                Status
+                                Revenue
                               </th>
                               <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">
-                                Revenue
+                                Impressions
+                              </th>
+                              <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">
+                                Status
                               </th>
                             </tr>
                           </thead>
@@ -74,12 +77,15 @@ export default function InnerDashboardPage() {
                                   <div className="text-gray-900">{affiliate?.campaign_id}</div>
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-4 text-sm">
-                                  <span className={`${affiliate?.accepted === true ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'} inline-flex rounded-full px-3 py-1 text-xs font-semibold leading-5`}>
-                                    {affiliate?.accepted === true ? 'Active' : 'Invited' }
-                                  </span>
+                                  <span>$0</span>
                                 </td>
                                 <td className="whitespace-nowrap px-3 py-4 text-sm">
-                                  <span>$0</span>
+                                  <span>{affiliate?.impressions}</span>
+                                </td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm">
+                                  <span className={`${affiliate?.accepted === true ? 'bg-green-600 text-white' : 'bg-gray-500 text-white'} inline-flex rounded-full px-3 py-1 text-xs font-semibold leading-5`}>
+                                    {affiliate?.accepted === true ? 'Active' : 'Invited' }
+                                  </span>
                                 </td>
                               </tr>
                             ))}

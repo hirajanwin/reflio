@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { useUser, deleteCompany, disableEmails, editCompanyWebsite } from '@/utils/useUser';
+import { useEffect, useState, useRef } from 'react';
+import { useUser, deleteCompany, disableEmails, editCompanyWebsite, uploadLogoImage } from '@/utils/useUser';
 import { useCompany } from '@/utils/CompanyContext';
 import SEOMeta from '@/components/SEOMeta'; 
 import { Switch } from '@headlessui/react';
@@ -15,6 +15,8 @@ export default function companiesettingsPage() {
   const [loading, setLoading] = useState(false);
   const [websiteUrlInput, setWebsiteUrlInput] = useState(null);
   const [urlValid, setUrlValid] = useState(null);
+  const [logoError, setLogoError] = useState(false);
+  const fileInput = useRef(null);
   
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this company?')){
@@ -26,6 +28,24 @@ export default function companiesettingsPage() {
           setErrorMessage(true);
         }
       });
+    }
+  };
+
+  const handleFileUpload = async (e) => {
+    if(e.target.files[0].name?.includes("png") && e.target.files[0].size < 2000000){
+      await uploadLogoImage(router?.query?.companyId, e.target.files[0]).then((result) => {
+        console.log("UPlOADED!!!!")
+        console.log(result)
+        if(result){
+          setLogoError(false);
+          router.replace(window.location.href);
+        } else {
+          toast.error('There was an error when uploading your image. Please make sure that it is a PNG file and is less than 2mb.');
+        }
+      });
+    } else {
+      setLogoError(true);
+      return false;
     }
   };
 
@@ -86,12 +106,55 @@ export default function companiesettingsPage() {
         </div>
       </div>
       <div className="wrapper">
+        <div className="bg-white shadow-lg rounded-xl mt-5 max-w-3xl border-4 border-gray-200">
+          <div className="p-6 sm:p-8">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Company logo</h3>
+            <div className="mt-2 max-w-2xl text-gray-500">
+              <p>This will be shown when inviting new affiliates, as well as inside your affiliates dashboard.</p>
+            </div>
+            <div>
+              <div className="mt-3 flex items-center">
+                {
+                  activeCompany?.company_image !== null &&
+                  <img alt="Logo" src={process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL+activeCompany?.company_image} className="w-24 h-auto mr-4"/>
+                }
+                <input
+                  onChange={handleFileUpload}
+                  type="file"
+                  accept="image/png"
+                  style={{display: 'none'}}
+                  multiple={false}
+                  ref={fileInput}
+                />
+                <button 
+                  type="button"
+                  className="bg-white py-3 px-5 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" 
+                  onClick={() => fileInput.current.click()}
+                >
+                  Upload File
+                </button>
+              </div>
+              <p className="mt-2 text-gray-500">
+                Must be a .PNG file and less than 2mb.
+              </p>
+              {
+                logoError &&
+                <div className="mt-4 bg-red p-4 rounded-lg text-md text-white text-center">
+                  There was an error when uploading your file.
+                </div>
+              }
+            </div>
+          </div>
+        </div>
         <form action="#" method="POST" onSubmit={handleWebsiteUpdate} className="bg-white shadow-lg rounded-xl mt-5 max-w-3xl border-4 border-gray-200">
           <div className="p-6 sm:p-8">
             <div>
               <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">Company Website</h3>
               <div>
-                <div className="mt-1 flex rounded-md shadow-sm">
+                <div className="mt-1 flex items-center h-14 mb-3">
+                  <div className="h-full bg-gray-100 flex items-center justify-center p-3 rounded-lg rounded-tr-none rounded-br-none border-2 border-r-0 border-gray-300">
+                    <span>https://</span>
+                  </div>
                   <input
                     minLength="3"
                     maxLength="25"
@@ -102,10 +165,11 @@ export default function companiesettingsPage() {
                     name="company_url"
                     id="company_url"
                     autoComplete="company_url"
-                    className="flex-1 block w-full min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 border-gray-300"
+                    className="flex-1 block w-full min-w-0 h-full focus:outline-none sm:text-md rounded-lg rounded-tl-none rounded-bl-none border-2 border-l-0 border-gray-300"
                     onChange={e=>{setUrlValid(checkValidUrl(e.target.value)), urlValid ? setWebsiteUrlInput(e.target.value) : setWebsiteUrlInput(null)}}
                   />
                 </div>
+                <p className="text-gray-500">Please only include the base domain of your website (e.g. google.com). You do not need to include https:// or www. We will automatically do this on our end.</p>
               </div>
             </div>
           </div>

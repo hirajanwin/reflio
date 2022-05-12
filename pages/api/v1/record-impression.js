@@ -1,10 +1,10 @@
-import { getCompanyFromExternal } from '@/utils/useDatabase';
+import { getCompanyFromExternal, verifyReferral, fireRecordImpression } from '@/utils/useDatabase';
 import Cors from 'cors';
 import { getURL } from '@/utils/helpers';
 
 // Initializing the cors middleware
 const cors = Cors({
-  methods: ['GET', 'HEAD'],
+  methods: ['GET', 'POST', 'HEAD'],
 });
 
 // Helper method to wait for a middleware to execute before continuing
@@ -21,13 +21,18 @@ function runMiddleware(req, res, fn) {
   })
 }
 
-const verifyCompany = async (req, res) => {
+const recordImpression = async (req, res) => {
 
   // Run the middleware
   await runMiddleware(req, res, cors);
 
   const headers = req.headers;
-  const body = req.body;
+  let body = req.body;
+  try {
+    body = JSON.parse(body);
+  } catch (error) {
+    console.log("Could not parse body")
+  }
   let filteredReferer = null;
 
   if(headers?.origin) {
@@ -38,22 +43,18 @@ const verifyCompany = async (req, res) => {
   }
 
   try {
-    if(filteredReferer !== null){
+    if(filteredReferer !== null && body?.referralCode && body?.companyId){
+      const referralVerify = await verifyReferral(body?.referralCode, body?.companyId);
 
-      const projectVerify = await getCompanyFromExternal(filteredReferer);
+      if(referralVerify !== "error" && referralVerify?.affiliate_id){
+        await fireRecordImpression(referralVerify?.affiliate_id);
 
-      console.log(projectVerify)
-      
-      if(projectVerify === "error"){
-        return res.status(500).json({ statusCode: 500, verified: false });
-      } else {
-        return res.status(200).json({ verified: true });
+        return res.status(200).json({ recorded: true }); 
+
       }
-
-    } else {
-
-      return res.status(500).json({ statusCode: 500, verified: false });
     }
+
+    return res.status(500).json({ statusCode: 500, verified: false });
 
   } catch (error) {
     console.log(error);
@@ -62,4 +63,4 @@ const verifyCompany = async (req, res) => {
   }
 };
 
-export default verifyCompany;
+export default recordImpression;
