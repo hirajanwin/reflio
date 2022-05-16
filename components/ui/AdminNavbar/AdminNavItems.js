@@ -130,8 +130,8 @@ export default function AdminNavItems() {
               key={item.name}
               href={item.href}
               className={classNames(
-                router?.asPath?.includes(item.href) && 'bg-primary border-primary-2 hover:bg-primary-2 hover-opacity-100',
-                'flex items-center p-2 text-lg font-semibold rounded-md border-2 border-transparent hover:opacity-70'
+                router?.asPath?.includes(item.href) && 'bg-gray-300 border-gray-400 hover-opacity-100',
+                'flex items-center p-2 text-lg font-semibold rounded-md border-2 border-transparent hover:opacity-80'
               )}
               aria-current={item.current ? 'page' : undefined}
             >
@@ -142,8 +142,8 @@ export default function AdminNavItems() {
             <a
               href={`/dashboard/plan`}
               className={classNames(
-                router?.asPath === `/dashboard/plan` && 'bg-primary border-primary-2 hover:bg-primary hover:opacity-100',
-                'flex items-center p-2 text-lg font-semibold rounded-md border-2 border-transparent hover:opacity-70'
+                router?.asPath === `/dashboard/plan` && 'bg-gray-300 border-gray-400 hover-opacity-100',
+                'flex items-center p-2 text-lg font-semibold rounded-md border-2 border-transparent hover:opacity-80'
               )}
             >
               <CreditCardIcon className="mr-4 flex-shrink-0 h-6 w-6" aria-hidden="true" />

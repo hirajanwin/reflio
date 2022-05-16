@@ -1,6 +1,6 @@
 const ReflioScript = async function() {  
   const apiRoot = 'http://localhost:3000/api/v1';
-  const rootDomain = window.location.href;
+  const rootDomain = window.location.host;
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const reflioVerifyParam = urlParams.get("reflioVerify");
@@ -13,8 +13,9 @@ const ReflioScript = async function() {
       return({
         companyId: reflioInnerScript.getAttribute("data-reflio") ? reflioInnerScript.getAttribute("data-reflio") : null,
         window: window,
-        rooyDomain: rootDomain,
-        apiRoot: apiRoot
+        rootDomain: rootDomain,
+        apiRoot: apiRoot,
+        domains: reflioInnerScript.getAttribute("data-domains") ? reflioInnerScript.getAttribute("data-domains") : null
       })
     }
     async checkDomainVerification(){
@@ -52,20 +53,37 @@ const ReflioScript = async function() {
     }
   }
 
-  //WIP: add local storage item if referral is valid
   if(reflioReferralParam !== null && Reflio.details().companyId !== null){
     const trackImpression = await Reflio.impression(reflioReferralParam, Reflio.details().companyId);
 
-    console.log("Track Impression:")
-    console.log(trackImpression)
-  }
+    if(trackImpression?.referral_details && Reflio.details().domains){
+      document.querySelectorAll("[href]").forEach(link => {
+        if(Reflio.details().domains?.includes(",")){
+          Reflio.details().domains.split(',').map(domain => {
+            if(link.href?.includes(domain.trim()) && !link.href.includes(Reflio.details().rootDomain)){
 
-  // //WIP: track conversion from payment
-  // window.addEventListener("Reflio.convert", function(e){
-  //   if(e?.detail?.email){
-  //     console.log("Customer: ", e?.detail.email);
-  //   }
-  // });
+              console.log("CONTAINS - CHANGING HREF NOW!")
+
+              let baseUrl = new URL(link.href);
+              let searchParams = baseUrl.searchParams;
+              
+              // add "topic" parameter
+              searchParams.set('ref', reflioReferralParam);
+              
+              baseUrl.search = searchParams.toString();
+              
+              let newUrl = baseUrl.toString();
+      
+              link.href = newUrl;
+            }
+          })
+        }
+      });
+
+      console.log("Track Impression:")
+      console.log(trackImpression?.referral_details)
+    }
+  }
 
   if(!reflioInnerScript) {
     console.error("Could not load Reflio: make sure the <script> tag includes data-reflio='<companyId>'")

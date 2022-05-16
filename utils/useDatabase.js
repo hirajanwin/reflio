@@ -279,6 +279,35 @@ export const fireRecordImpression = async (id) => {
   }
 };
 
+export const referralDetails = async (details) => {
+  let { data, error } = await supabaseAdmin
+    .from('campaigns')
+    .select('*')
+    .eq('campaign_id', details?.campaign_id)
+    .single();
+
+  if(error){
+    return "error";
+  }
+  
+  if(data){
+    let dateToday = new Date();
+    if(data?.cookie_window){
+      dateToday.setDate(dateToday.getDate() + data?.cookie_window);
+    } else {
+      dateToday.setDate(dateToday.getDate() + 60)
+    }
+    dateToday = dateToday.toUTCString();
+    
+    return {
+      "campaign_id": data?.campaign_id,
+      "cookie_date": dateToday,
+      "campaign_name": data?.campaign_name,
+      "affiliate_id": details?.affiliate_id
+    }
+  }
+};
+
 export {
   upsertProductRecord,
   upsertPriceRecord,
