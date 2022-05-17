@@ -12,8 +12,8 @@ export default function Layout({ children, meta: pageMeta }) {
   const SimpleNav = dynamic(() => import('@/components/ui/SimpleNav'));
   const router = useRouter();
   const meta = {
-    title: 'Reflio: Create a referral program without breaking the bank.',
-    description: 'Create a referral program without breaking the bank.',
+    title: 'Reflio: Create a privacy-friendly referral program for your SaaS.',
+    description: 'Create a privacy-friendly referral program for your SaaS. GDPR Friendly. Based in the UK. European-owned infrastructure.',
     cardImage: '/og.png',
     ...pageMeta
   };
