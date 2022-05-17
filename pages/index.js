@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import SEOMeta from '@/components/SEOMeta'; 
 import Confetti from 'react-confetti';
 import { useWindowSize } from 'react-use';
+import Logo from '@/components/icons/Logo';
 
 export default function Index() {
   const [subscribed, setSubscribed] = useState(false);
@@ -38,22 +38,26 @@ export default function Index() {
   
   return(
     <>
-      <div className="relative py-24">
-        <div className="wrapper text-center">
+      <div className="relative py-12">
+        <div className="wrapper wrapper-sm">
           <div className="mb-14">
-            <h1 className="text-3xl sm:text-4xl lg:text-7xl font-bold mb-8">
-              <span className="block text-primary">Create a referral program</span>
-              <span><span className="italic text-secondary">without</span> breaking the bank.</span>
+            <Logo className="w-32 md:w-44 h-auto"/>
+          </div>
+          <div className="mb-14">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl mb-8">
+              Create a <span className="italic font-bold">privacy-friendly referral program</span> for your SaaS.
             </h1>
-            <p className="text-lg sm:text-xl mx-auto">Launching soon. Follow along <a className="font-bold" href="https://twitter.com/richiemcilroy" target="_blank">@richiemcilroy</a> and watch me build <span className="font-bold">Reflio</span> live.</p>
+            <p className="text-xl sm:text-3xl text-gray-500 font-light">
+              Reflio puts <span className="text-gray-600 font-normal underline">digital privacy first</span>. All referrals are processed through <span className="text-gray-600 font-normal underline">European-owned infrastructure</span>, and our company is registered in the UK. With Reflio, referrals located in the EU are <span className="text-gray-600 font-normal underline">automatically required to confirm their consent</span> before a cookie is set. 
+            </p>
           </div>
           <div>
-            <p className="text-md sm:text-xl font-bold mb-3">Sign up and be <span className="underline">one of the first</span> to get early access</p>
-            <form type="POST" onSubmit={handleSubscribe} className="md:flex md:items-center w-full max-w-xl mx-auto h-auto md:h-20 rounded-lg overflow-hidden shadow-lg border-4 border-primary outline-none focus:outline-none">
+            <p className="text-lg mb-3 text-gray-700">Sign up and be one of the first to get early access.</p>
+            <form type="POST" onSubmit={handleSubscribe} className="md:flex md:items-center w-full max-w-xl h-auto md:h-20 rounded-lg overflow-hidden shadow-lg border-4 border-primary outline-none focus:outline-none">
               <div className="flex items-center h-20 md:flex-grow">
                 <input type="email" id="email" name="email" placeholder="youremail@email.com" required className="w-auto flex-grow h-full border-none px-3 text-gray-700 text-md md:text-lg font-medium outline-none focus:outline-none"/>
               </div>
-              <button disabled={subscribed === true ? true : false} type="submit" className={`${subscribed ? 'bg-primary-2' : 'bg-primary hover:bg-primary-2' } w-full h-full md:w-auto p-5 md:p-0 transition-all font-bold text-md md:text-lg px-3 md:px-5`}>{subscribed ? 'Your Subscribed' : 'Subscribe'}</button>
+              <button disabled={subscribed === true ? true : false} type="submit" className={`${subscribed ? 'bg-secondary' : 'bg-secondary-2 hover:bg-secondary' } w-full h-full md:w-auto p-5 md:p-0 transition-all font-bold text-md md:text-lg px-3 md:px-5 text-white`}>{subscribed ? 'Your Subscribed' : 'Subscribe'}</button>
             </form>
             
             {

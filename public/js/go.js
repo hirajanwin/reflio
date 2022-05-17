@@ -56,14 +56,12 @@ const ReflioScript = async function() {
   if(reflioReferralParam !== null && Reflio.details().companyId !== null){
     const trackImpression = await Reflio.impression(reflioReferralParam, Reflio.details().companyId);
 
+    //If multiple domains, add referral to other domain
     if(trackImpression?.referral_details && Reflio.details().domains){
       document.querySelectorAll("[href]").forEach(link => {
         if(Reflio.details().domains?.includes(",")){
           Reflio.details().domains.split(',').map(domain => {
             if(link.href?.includes(domain.trim()) && !link.href.includes(Reflio.details().rootDomain)){
-
-              console.log("CONTAINS - CHANGING HREF NOW!")
-
               let baseUrl = new URL(link.href);
               let searchParams = baseUrl.searchParams;
               
@@ -79,6 +77,11 @@ const ReflioScript = async function() {
           })
         }
       });
+
+      //WIP: set cookie
+      if(trackImpression?.referral_details){
+        
+      }
 
       console.log("Track Impression:")
       console.log(trackImpression?.referral_details)

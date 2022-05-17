@@ -10,6 +10,10 @@
   @apply max-w-screen-xl;
 }
 
+.wrapper-sm {
+  @apply max-w-3xl
+}
+
 :root {
   --primary: #ffaf45;
   --primary-2: #e99c36;
