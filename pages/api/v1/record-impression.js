@@ -1,4 +1,4 @@
-import { getCompanyFromExternal, verifyReferral, fireRecordImpression, referralDetails } from '@/utils/useDatabase';
+import { getCompanyFromExternal, verifyReferral, fireRecordImpression, createReferral } from '@/utils/useDatabase';
 import Cors from 'cors';
 import { getURL } from '@/utils/helpers';
 
@@ -50,7 +50,7 @@ const recordImpression = async (req, res) => {
         const impression = await fireRecordImpression(referralVerify?.affiliate_id);
 
         if(impression === "success"){
-          const referral = await referralDetails(referralVerify);
+          const referral = await createReferral(referralVerify);
 
           if(referral !== "error"){
             return res.status(200).json({ referral_details: referral }); 

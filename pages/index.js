@@ -43,12 +43,17 @@ export default function Index() {
           <div className="mb-14">
             <Logo className="w-32 md:w-44 h-auto"/>
           </div>
-          <div className="mb-14">
+          <div className="mb-10">
             <h1 className="text-3xl sm:text-4xl lg:text-6xl mb-8">
               Create a <span className="italic font-bold">privacy-friendly referral program</span> for your SaaS.
             </h1>
             <p className="text-xl sm:text-3xl text-gray-500 font-light">
               Reflio puts <span className="text-gray-600 font-normal underline">digital privacy first</span>. All referrals are processed through <span className="text-gray-600 font-normal underline">European-owned infrastructure</span>, and our company is registered in the UK. With Reflio, referrals located in the EU are <span className="text-gray-600 font-normal underline">automatically required to confirm their consent</span> before a cookie is set. 
+            </p>
+          </div>
+          <div className="mb-10">
+            <p className="text-xl text-gray-600 font-light">
+              Pricing will start from <span className="text-gray-600 font-normal underline">$0/month</span>, with a <span className="text-gray-600 font-normal underline">9% commission</span> per successful referral.
             </p>
           </div>
           <div>

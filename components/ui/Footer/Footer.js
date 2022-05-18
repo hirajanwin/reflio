@@ -14,6 +14,7 @@ export default function Footer() {
               Create a privacy-friendly referral program for your SaaS.
             </p>
           </div>
+          <a className="mt-2 block underline text-gray-500" href="mailto:richie@reflio.com">Have a question? Get in touch</a>
         </div>
         <div className="mt-6">
           <p className="text-gray-500 text-sm">&copy; 2022 Reflio (McIlroy Limited).</p>

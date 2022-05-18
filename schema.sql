@@ -114,6 +114,33 @@ create policy "Can insert own user data." on affiliates for insert with check (a
 create policy "Can delete own user data." on affiliates for delete using (auth.uid() = id);
 
 /**
+* Referrals
+* Note: this is a private table that contains a mapping of user IDs and referrals.
+*/
+create table referrals (
+  -- UUID from auth.users
+  id uuid references auth.users not null,
+  referral_id text primary key unique not null default generate_uid(20) unique,
+  affiliate_id text,
+  affiliate_code text,
+  campaign_id text,
+  company_id text,
+  commission_type text,
+  commission_value integer,
+  cookie_window integer default 60,
+  commission_period integer,
+  minimum_days_payout integer default 30,
+  referral_converted boolean default false,
+  referral_expiry text,
+  created timestamp with time zone default timezone('utc'::text, now()) not null
+);
+alter table referrals enable row level security;
+create policy "Can view own user data." on referrals for select using (auth.uid() = id);
+create policy "Can update own user data." on referrals for update using (auth.uid() = id);
+create policy "Can insert own user data." on referrals for insert with check (auth.uid() = id);
+create policy "Can delete own user data." on referrals for delete using (auth.uid() = id);
+
+/**
 * This trigger automatically creates a user entry when a new user signs up via Supabase Auth.
 */ 
 create function public.handle_new_user() 

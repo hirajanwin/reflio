@@ -279,7 +279,8 @@ export const fireRecordImpression = async (id) => {
   }
 };
 
-export const referralDetails = async (details) => {
+export const createReferral = async (details) => {
+  let campaignData = null;
   let { data, error } = await supabaseAdmin
     .from('campaigns')
     .select('*')
@@ -291,19 +292,41 @@ export const referralDetails = async (details) => {
   }
   
   if(data){
+    campaignData = data;
+    
     let dateToday = new Date();
     if(data?.cookie_window){
       dateToday.setDate(dateToday.getDate() + data?.cookie_window);
     } else {
       dateToday.setDate(dateToday.getDate() + 60)
     }
+    let dateTodayIso = dateToday.toISOString();
     dateToday = dateToday.toUTCString();
-    
-    return {
-      "campaign_id": data?.campaign_id,
-      "cookie_date": dateToday,
-      "campaign_name": data?.campaign_name,
-      "affiliate_id": details?.affiliate_id
+
+    let referralData = { data, error } = await supabaseAdmin.from('referrals').insert({
+      id: data?.id,
+      affiliate_id: details?.affiliate_id,
+      affiliate_code: details?.affiliate_code,
+      campaign_id: data?.campaign_id,
+      company_id: data?.company_id,
+      commission_type: data?.commission_type,
+      commission_value: data?.commission_value,
+      cookie_window: data?.cookie_window,
+      commission_period: data?.commission_period,
+      minimum_days_payout: data?.minimum_days_payout,
+      referral_expiry: dateTodayIso
+    });
+
+    if(referralData?.data){
+      return {
+        "campaign_id": campaignData?.campaign_id,
+        "cookie_date": dateToday,
+        "campaign_name": campaignData?.campaign_name,
+        "affiliate_id": details?.affiliate_id,
+        "referral_id": referralData?.data[0].referral_id
+      }
+    } else {
+      return "error";
     }
   }
 };

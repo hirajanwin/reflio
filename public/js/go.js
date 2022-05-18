@@ -12,9 +12,7 @@ const ReflioScript = async function() {
     details(){
       return({
         companyId: reflioInnerScript.getAttribute("data-reflio") ? reflioInnerScript.getAttribute("data-reflio") : null,
-        window: window,
         rootDomain: rootDomain,
-        apiRoot: apiRoot,
         domains: reflioInnerScript.getAttribute("data-domains") ? reflioInnerScript.getAttribute("data-domains") : null
       })
     }
@@ -36,11 +34,30 @@ const ReflioScript = async function() {
         return response.json();
       })
     }
+    referral(){
+      let name = "reflioData=";
+      let decodedCookie = decodeURIComponent(document.cookie);
+      let ca = decodedCookie.split(';');
+      for(let i = 0; i <ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+          try {
+            return JSON.parse(c.substring(name.length, c.length))
+          } catch (error) {
+            return {
+              "error": true
+            };
+          }
+        }
+      }
+      return null;
+    }
   }
 
   const Reflio = new rfl;
-
-  console.log(Reflio.details())
 
   //Tracking script verification from server 
   if(reflioVerifyParam !== null){
@@ -53,7 +70,7 @@ const ReflioScript = async function() {
     }
   }
 
-  if(reflioReferralParam !== null && Reflio.details().companyId !== null){
+  if(reflioReferralParam !== null && Reflio.details().companyId !== null && Reflio.referral() === null){
     const trackImpression = await Reflio.impression(reflioReferralParam, Reflio.details().companyId);
 
     //If multiple domains, add referral to other domain
@@ -65,7 +82,6 @@ const ReflioScript = async function() {
               let baseUrl = new URL(link.href);
               let searchParams = baseUrl.searchParams;
               
-              // add "topic" parameter
               searchParams.set('ref', reflioReferralParam);
               
               baseUrl.search = searchParams.toString();
@@ -80,11 +96,8 @@ const ReflioScript = async function() {
 
       //WIP: set cookie
       if(trackImpression?.referral_details){
-        
+        document.cookie = `reflioData=${JSON.stringify(trackImpression?.referral_details)}; expires=${trackImpression?.referral_details?.cookie_date}`;
       }
-
-      console.log("Track Impression:")
-      console.log(trackImpression?.referral_details)
     }
   }
 
