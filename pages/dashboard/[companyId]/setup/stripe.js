@@ -48,7 +48,7 @@ export default function StripeSetupPage() {
             :
               <div>
                 <a 
-                  href={`https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=read_only`}
+                  href={`https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=read_write`}
                   target="_blank"
                 >
                   <StripeConnect className="w-52 h-auto"/>

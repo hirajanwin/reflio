@@ -149,7 +149,7 @@ export default function companiesettingsPage() {
         <form action="#" method="POST" onSubmit={handleWebsiteUpdate} className="bg-white shadow-lg rounded-xl mt-5 max-w-3xl border-4 border-gray-200">
           <div className="p-6 sm:p-8">
             <div>
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-2">Company Website</h3>
+              <label for="company_url" className="text-lg leading-6 font-medium text-gray-900 mb-2">Company Website</label>
               <div>
                 <div className="mt-1 flex items-center h-14 mb-3">
                   <div className="h-full bg-gray-100 flex items-center justify-center p-3 rounded-lg rounded-tr-none rounded-br-none border-2 border-r-0 border-gray-300">
