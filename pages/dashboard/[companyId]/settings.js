@@ -1,19 +1,21 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef } from 'react';
-import { useUser, deleteCompany, disableEmails, editCompanyWebsite, uploadLogoImage } from '@/utils/useUser';
+import { useUser, deleteCompany, disableEmails, editCompanyWebsite, uploadLogoImage, editCompanyHandle } from '@/utils/useUser';
 import { useCompany } from '@/utils/CompanyContext';
 import SEOMeta from '@/components/SEOMeta'; 
 import { Switch } from '@headlessui/react';
-import { classNames, checkValidUrl } from '@/utils/helpers';
+import { classNames, checkValidUrl, slugifyString } from '@/utils/helpers';
 import Button from '@/components/ui/Button'; 
+import toast from 'react-hot-toast';
 
 export default function companiesettingsPage() {
   const router = useRouter();
   const { user, userFinderLoaded } = useUser();
   const { activeCompany } = useCompany();
-  const [errorMessage, setErrorMessage] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [urlLoading, setUrlLoading] = useState(false);
+  const [handleLoading, setHandleLoading] = useState(false);
   const [websiteUrlInput, setWebsiteUrlInput] = useState(null);
+  const [companyHandleInput, setCompanyHandleInput] = useState(null);
   const [urlValid, setUrlValid] = useState(null);
   const [logoError, setLogoError] = useState(false);
   const fileInput = useRef(null);
@@ -22,10 +24,9 @@ export default function companiesettingsPage() {
     if (window.confirm('Are you sure you want to delete this company?')){
       await deleteCompany(router?.query?.companyId).then((result) => {
         if(result === "success"){
-          setErrorMessage(false);
           window.location.href = "/dashboard";
         } else {
-          setErrorMessage(true);
+          toast.error('There was an error saving your changes.');
         }
       });
     }
@@ -52,10 +53,9 @@ export default function companiesettingsPage() {
   const handleDisableEmails = async (type) => {    
     await disableEmails(router?.query?.companyId, type).then((result) => {
       if(result === "success"){
-        setErrorMessage(null);
         window.location.href = window.location.href;
       } else {
-        setErrorMessage("Unable to change email notification status. Please try again later.");
+        toast.error('Unable to change email notification status. Please try again later.');
       }
     });
   };
@@ -64,7 +64,7 @@ export default function companiesettingsPage() {
 
     e.preventDefault();
 
-    if(loading === true){
+    if(urlLoading === true){
       return false;
     }
 
@@ -75,18 +75,51 @@ export default function companiesettingsPage() {
       data[entry[0]] = entry[1];
     }
 
-    setLoading(true);
+    setUrlLoading(true);
 
     await editCompanyWebsite(router?.query?.companyId, data).then((result) => {
       if(result === "success"){
-        setErrorMessage(false);
         router.replace(window.location.href);
 
       } else {
-        setErrorMessage(true);
+        toast.error('There was an error saving your changes.');
       }
 
-      setLoading(false);
+      setUrlLoading(false);
+    });
+
+  };
+
+  const handleCompanyHandleUpdate = async (e) => {
+
+    e.preventDefault();
+
+    if(handleLoading === true){
+      return false;
+    }
+
+    const formData = new FormData(e.target);
+    const data = {};
+ 
+    for (let entry of formData.entries()) {
+      data[entry[0]] = entry[1];
+    }
+
+    setHandleLoading(true);
+
+    await editCompanyHandle(router?.query?.companyId, data).then((result) => {
+      if(result === "success"){
+        router.replace(window.location.href);
+
+      } else {
+        if(result === "duplicate"){
+          toast.error('This handle already exists. Please try another.');
+        } else {
+          toast.error('There was an error saving your changes.');
+        }
+      }
+
+      setHandleLoading(false);
     });
 
   };
@@ -179,9 +212,57 @@ export default function companiesettingsPage() {
               <Button
                 medium
                 primary
-                disabled={loading}
+                disabled={urlLoading}
               >
-                <span>{loading ? 'Saving Changes...' : 'Save Changes'}</span>
+                <span>{urlLoading ? 'Saving Changes...' : 'Save Changes'}</span>
+              </Button>
+            </div>
+          }
+          {
+            !urlValid && urlValid !== null &&
+            <div className="border-t-4 p-6 bg-white flex items-center justify-start">
+              <div className="bg-red-600 text-center p-4 rounded-lg">
+                <p className="text-white text-sm font-medium">The URL you entered is not valid. Please check it and try again.</p>
+              </div>
+            </div>
+          }
+        </form>
+        <form action="#" method="POST" onSubmit={handleCompanyHandleUpdate} className="bg-white shadow-lg rounded-xl mt-5 max-w-3xl border-4 border-gray-200">
+          <div className="p-6 sm:p-8">
+            <div>
+              <label for="company_handle" className="text-lg leading-6 font-medium text-gray-900 mb-2">Company Handle</label>
+              <div>
+                <div className="mt-1 flex items-center h-14 mb-3">
+                  <div className="h-full bg-gray-100 flex items-center justify-center p-3 rounded-lg rounded-tr-none rounded-br-none border-2 border-r-0 border-gray-300">
+                    <span>affiliates.reflio.com/</span>
+                  </div>
+                  <input
+                    minLength="3"
+                    maxLength="25"
+                    required
+                    value={companyHandleInput !== null ? companyHandleInput : activeCompany?.company_handle && activeCompany?.company_handle}
+                    placeholder="companyHandle"
+                    type="text"
+                    name="company_handle"
+                    id="company_handle"
+                    autoComplete="company_handle"
+                    className="flex-1 block w-full min-w-0 h-full focus:outline-none sm:text-md rounded-lg rounded-tl-none rounded-bl-none border-2 border-l-0 border-gray-300"
+                    onChange={e=>{setCompanyHandleInput(slugifyString(e.target.value))}}
+                  />
+                </div>
+                <p className="text-gray-500">Your company handle is used for shareable links, including the link that affiliates see to join your campaign.</p>
+              </div>
+            </div>
+          </div>
+          {
+            companyHandleInput !== null && companyHandleInput !== activeCompany?.company_handle &&
+            <div className="border-t-4 p-6 bg-white flex items-center justify-start">
+              <Button
+                medium
+                primary
+                disabled={handleLoading}
+              >
+                <span>{handleLoading ? 'Saving Changes...' : 'Save Changes'}</span>
               </Button>
             </div>
           }
@@ -238,12 +319,6 @@ export default function companiesettingsPage() {
             </div>
           </div>
         </div>
-        {
-          errorMessage &&
-          <div className="bg-red-600 text-center p-4 mt-5 rounded-lg">
-            <p className="text-white text-sm font-medium">Error saving changes</p>
-          </div>
-        }
       </div>
     </>
   );

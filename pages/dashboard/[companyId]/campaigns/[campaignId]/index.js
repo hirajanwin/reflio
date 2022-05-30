@@ -55,6 +55,12 @@ export default function SingleCampaignPage() {
                     <div>
                       <div className="flex flex-col items-start mb-6">
                         <div className="mb-3">
+                          {
+                            activeCampaign?.default_campaign === true &&
+                            <div className="inline-flex items-center px-4 py-1 rounded-full text-xs font-semibold bg-secondary text-white mb-5">
+                              Default Campaign
+                            </div>
+                          }
                           <h1 className="text-2xl sm:text-3xl tracking-tight font-extrabold">{activeCampaign?.campaign_name}</h1>
                         </div>
                         <Button
@@ -72,11 +78,11 @@ export default function SingleCampaignPage() {
                         <p className="mb-1">
                           Affiliates can join your campaign using the link below:
                         </p>
-                        <CopyToClipboard text={`https://affiliates.reflio.com/invite/${activeCampaign?.campaign_id}`} onCopy={() => toast.success('URL copied to clipboard')}>
+                        <CopyToClipboard text={`https://affiliates.reflio.com/invite/${activeCompany?.company_handle}`} onCopy={() => toast.success('URL copied to clipboard')}>
                           <input 
                             type="text"
                             className="flex w-full max-w-lg cursor-pointer min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 border-gray-300 bg-white"
-                            value={`https://affiliates.reflio.com/invite/${activeCampaign?.campaign_id}`}
+                            value={`https://affiliates.reflio.com/invite/${activeCompany?.company_handle}`}
                           />
                         </CopyToClipboard>
                         <p className="mt-3">

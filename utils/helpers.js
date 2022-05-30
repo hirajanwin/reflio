@@ -136,3 +136,16 @@ export const checkValidUrl = (str) => {
     '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
   return !!pattern.test(str);
 }
+
+export const slugifyString = (text) => {
+  return text
+  .toString()
+  .normalize('NFD')
+  .replace( /[\u0300-\u036f]/g, '' )
+  .toLowerCase()
+  .trim()
+  .replace(/\s+/g, '-')
+  .replace(/[^\w\-]+/g, '')
+  .replace(/\-\-+/g, '-')
+  .substring(0, 64);
+};

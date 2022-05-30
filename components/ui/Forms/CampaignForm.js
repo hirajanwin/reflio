@@ -51,11 +51,11 @@ const CampaignForm = ({ edit, setupMode }) => {
       await newCampaign(user, data, router?.query?.companyId).then((result) => {
         if(result === "success"){
           setErrorMessage(false);
-          // if(setupMode){
-          //   router.replace(`/dashboard/${router?.query?.companyId}/setup/add`)
-          // } else {
-          //   router.replace(`/dashboard/${router?.query?.companyId}/campaigns`)
-          // }
+          if(setupMode){
+            router.replace(`/dashboard/${router?.query?.companyId}/setup/add`)
+          } else {
+            router.replace(`/dashboard/${router?.query?.companyId}/campaigns`)
+          }
         } else {
           setErrorMessage(true);
         }
@@ -116,7 +116,7 @@ const CampaignForm = ({ edit, setupMode }) => {
                           </label>
                           <div className="mt-1 flex rounded-md shadow-sm items-center justify-between">
                             <input
-                              minLength="20"
+                              minLength="1"
                               maxLength="100"
                               required
                               placeholder="20"
@@ -235,6 +235,24 @@ const CampaignForm = ({ edit, setupMode }) => {
                         </div>
                       </div> */}
 
+                      <div className="sm:col-span-12">
+                        <div className="relative flex items-start">
+                          <div className="flex items-center h-5">
+                            <input
+                              id="default_campaign"
+                              name="default_campaign"
+                              type="checkbox"
+                              className="focus:ring-primary h-6 w-6 text-secondary border-2 border-gray-300 rounded-full cursor-pointer"
+                              defaultChecked={edit && edit?.default_campaign ? true : false}
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">
+                            <label htmlFor="default_campaign" className="text-sm font-medium text-gray-700 cursor-pointer">
+                              Set as default campaign
+                            </label>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -247,6 +265,8 @@ const CampaignForm = ({ edit, setupMode }) => {
                 </div>
               </div>
             </div>
+
+
             <div className="border-t-4 px-6 pt-12 pb-8 bg-white flex items-center justify-start relative">
               <button type="button" onClick={e=>{showAdvancedOptions ? setShowAdvancedOptions(false) : setShowAdvancedOptions(true)}} className="bg-white p-2 text-sm font-semibold border-2 border-gray-200 rounded-lg absolute -top-6 inset-x-1/3">
                 {showAdvancedOptions ? '- Hide advanced options' : '+ Show advanced options'}

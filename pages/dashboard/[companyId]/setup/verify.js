@@ -62,7 +62,7 @@ export default function TrackingSetupPage() {
             {
               activeCompany?.domain_verified === true ?
                 <Button
-                  small
+                  large
                   primary
                   href={`/dashboard/${router?.query?.companyId}/campaigns`}
                 >
@@ -70,8 +70,8 @@ export default function TrackingSetupPage() {
                 </Button>
               :
                 <Button
-                  small
-                  secondary
+                  large
+                  primary
                   href={`http://${activeCompany?.company_url}?reflioVerify=true`}
                 >
                   <span>Verify on website</span>

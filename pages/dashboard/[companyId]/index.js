@@ -22,10 +22,8 @@ export default function InnerDashboardPage() {
     router.replace(`/dashboard/${router?.query?.companyId}/setup`);
   }
 
-  if(userCampaignDetails !== null && userCampaignDetails?.length > 0){
-    router.replace(`/dashboard/${router?.query?.companyId}/campaigns`);
-  }
-
+  router.replace(`/dashboard/${router?.query?.companyId}/campaigns`);
+  
   return (
     <>
       <SEOMeta title="Dashboard"/>

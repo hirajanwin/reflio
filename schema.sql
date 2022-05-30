@@ -51,7 +51,7 @@ create table companies (
   company_image text,
   company_meta jsonb,
   company_currency text,
-  company_handle text unique,
+  company_handle text unique default null,
   company_affiliates jsonb,
   stripe_account_data jsonb,
   domain_verified boolean default false,
@@ -81,6 +81,7 @@ create table campaigns (
   company_id text,
   cookie_window integer default 60,
   commission_period integer,
+  default_campaign boolean default false,
   minimum_days_payout integer default 30,
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
