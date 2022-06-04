@@ -23,6 +23,14 @@ export default function CampaignsPage() {
       if (!user) router.replace('/signin');
     }
   }, [userFinderLoaded, user, activeCompany]);
+
+  const generateInviteUrl = (activeCampaign, companyHandle, campaignId) => {
+    if(activeCampaign === true){
+      return `${process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL}/invite/${companyHandle}`;
+    } else {
+      return `${process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL}/invite/${companyHandle}/${campaignId}`;
+    }
+  };
   
   return (
     <>
@@ -77,8 +85,8 @@ export default function CampaignsPage() {
                                   <div className="mt-3">
                                     <p className="text-gray-500">
                                       <span>New affiliates can join at&nbsp;</span>
-                                      <CopyToClipboard text={`https://affiliates.reflio.com/invite/${activeCompany?.company_handle}`} onCopy={() => toast.success('URL copied to clipboard')}>
-                                        <button className="font-semibold underline" href={`https://affiliates.reflio.com/invite/${activeCompany?.company_handle}`}>{`https://affiliates.reflio.com/invite/${activeCompany?.company_handle}`}</button>
+                                      <CopyToClipboard text={generateInviteUrl(campaign?.default_campaign, activeCompany?.company_handle, campaign?.campaign_id)} onCopy={() => toast.success('URL copied to clipboard')}>
+                                        <button className="font-semibold underline" href={generateInviteUrl(campaign?.default_campaign, activeCompany?.company_handle, campaign?.campaign_id)}>{generateInviteUrl(campaign?.default_campaign, activeCompany?.company_handle, campaign?.campaign_id)}</button>
                                       </CopyToClipboard>
                                     </p>
                                   </div> 

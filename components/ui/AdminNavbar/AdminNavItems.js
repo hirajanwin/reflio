@@ -172,7 +172,7 @@ export default function AdminNavItems() {
             >
               Sign out
             </button>
-            <a className="items-center px-2 py-2 text-md font-semibold rounded-md" href="https://affiliates.reflio.com" target="_blank">Affiliate Dashboard</a>
+            <a className="items-center px-2 py-2 text-md font-semibold rounded-md" href={process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL} target="_blank">Affiliate Dashboard</a>
           </div>
         </div>
       </nav>

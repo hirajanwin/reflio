@@ -234,7 +234,7 @@ export default function companiesettingsPage() {
               <div>
                 <div className="mt-1 flex items-center h-14 mb-3">
                   <div className="h-full bg-gray-100 flex items-center justify-center p-3 rounded-lg rounded-tr-none rounded-br-none border-2 border-r-0 border-gray-300">
-                    <span>affiliates.reflio.com/</span>
+                    <span>{process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL}/</span>
                   </div>
                   <input
                     minLength="3"

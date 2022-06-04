@@ -82,6 +82,7 @@ create table campaigns (
   cookie_window integer default 60,
   commission_period integer,
   default_campaign boolean default false,
+  campaign_public boolean default true,
   minimum_days_payout integer default 30,
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );

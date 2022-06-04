@@ -1,5 +1,6 @@
 const ReflioScript = async function() {  
-  const apiRoot = 'http://localhost:3000/api/v1';
+  const domainRoot = 'http://localhost:3000';
+  const apiRoot = domainRoot+'/api/v1';
   const rootDomain = window.location.host;
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
@@ -7,7 +8,8 @@ const ReflioScript = async function() {
   const reflioReferralParam = urlParams.get("via") ? urlParams.get("via") : urlParams.get("ref") ? urlParams.get("ref") : null;
   let reflioReferralObject = localStorage.getItem('reflioReferral');
   const reflioInnerScript = document.querySelector("script[data-reflio]");
-
+  
+  //Define base Reflio class.
   class rfl {
     details(){
       return({
@@ -34,7 +36,7 @@ const ReflioScript = async function() {
         return response.json();
       })
     }
-    referral(){
+    checkCookie(){
       let name = "reflioData=";
       let decodedCookie = decodeURIComponent(document.cookie);
       let ca = decodedCookie.split(';');
@@ -55,6 +57,52 @@ const ReflioScript = async function() {
       }
       return null;
     }
+    consentRequired(){
+      if(Intl.DateTimeFormat().resolvedOptions().timeZone && Intl.DateTimeFormat().resolvedOptions().timeZone.indexOf("Europa") >= 0){
+        return true;
+      }
+
+      return false;
+    }
+    cookieEligible(){
+      if(reflioReferralParam !== null && Reflio.details().companyId !== null && Reflio.checkCookie() === null){
+        return true;
+      }
+
+      return false;
+    }
+    async register(){
+      if(Reflio.cookieEligible() === true){
+        const trackImpression = await Reflio.impression(reflioReferralParam, Reflio.details().companyId);
+    
+        //If multiple domains, add referral to other domain
+        if(trackImpression?.referral_details && Reflio.details().domains){
+          document.querySelectorAll("[href]").forEach(link => {
+            if(Reflio.details().domains?.includes(",")){
+              Reflio.details().domains.split(',').map(domain => {
+                if(link.href?.includes(domain.trim()) && !link.href.includes(Reflio.details().rootDomain)){
+                  let baseUrl = new URL(link.href);
+                  let searchParams = baseUrl.searchParams;
+                  
+                  searchParams.set('ref', reflioReferralParam);
+                  
+                  baseUrl.search = searchParams.toString();
+                  
+                  let newUrl = baseUrl.toString();
+          
+                  link.href = newUrl;
+                }
+              })
+            }
+          });
+    
+          //WIP: set cookie
+          if(trackImpression?.referral_details){
+            document.cookie = `reflioData=${JSON.stringify(trackImpression?.referral_details)}; expires=${trackImpression?.referral_details?.cookie_date}`;
+          }
+        }
+      }
+    }
   }
 
   const Reflio = new rfl;
@@ -65,44 +113,18 @@ const ReflioScript = async function() {
       const verifyDomain = await Reflio.checkDomainVerification();
 
       if(verifyDomain?.verified === true){
-        window.location.href = `http://localhost:3000/dashboard/${Reflio.details().companyId}/setup/verify`
+        window.location.href = `${domainRoot}/dashboard/${Reflio.details().companyId}/setup/verify`
       }
     }
   }
 
-  if(reflioReferralParam !== null && Reflio.details().companyId !== null && Reflio.referral() === null){
-    const trackImpression = await Reflio.impression(reflioReferralParam, Reflio.details().companyId);
-
-    //If multiple domains, add referral to other domain
-    if(trackImpression?.referral_details && Reflio.details().domains){
-      document.querySelectorAll("[href]").forEach(link => {
-        if(Reflio.details().domains?.includes(",")){
-          Reflio.details().domains.split(',').map(domain => {
-            if(link.href?.includes(domain.trim()) && !link.href.includes(Reflio.details().rootDomain)){
-              let baseUrl = new URL(link.href);
-              let searchParams = baseUrl.searchParams;
-              
-              searchParams.set('ref', reflioReferralParam);
-              
-              baseUrl.search = searchParams.toString();
-              
-              let newUrl = baseUrl.toString();
-      
-              link.href = newUrl;
-            }
-          })
-        }
-      });
-
-      //WIP: set cookie
-      if(trackImpression?.referral_details){
-        document.cookie = `reflioData=${JSON.stringify(trackImpression?.referral_details)}; expires=${trackImpression?.referral_details?.cookie_date}`;
-      }
-    }
+  if(Reflio.consentRequired() === true && Reflio.cookieEligible() === true){
+    Reflio.register();
+  } else {
+    console.log("COOKIE NOT ELIGIBLE!")
   }
 
   if(!reflioInnerScript) {
     console.error("Could not load Reflio: make sure the <script> tag includes data-reflio='<companyId>'")
   }
-
 }({});

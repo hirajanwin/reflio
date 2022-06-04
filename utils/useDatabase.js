@@ -239,7 +239,7 @@ export const inviteAffiliate = async (user, companyId, campaignId, emailInvites)
 
 export const verifyReferral = async (referralCode, companyId) => {
   let referralData = null;
-  let { data, error } = await supabaseAdmin
+  let { data } = await supabaseAdmin
     .from('affiliates')
     .select('*')
     .eq('company_id', companyId)
@@ -249,7 +249,7 @@ export const verifyReferral = async (referralCode, companyId) => {
   if(data){
     referralData = data;
   } else {
-    let { data, error } = await supabaseAdmin
+    let { data } = await supabaseAdmin
       .from('affiliates')
       .select('*')
       .eq('company_id', companyId)
@@ -261,8 +261,7 @@ export const verifyReferral = async (referralCode, companyId) => {
     }
   }
   
-  
-  if (error || referralData === null) {
+  if (referralData === null) {
     return "error";
   } else {
     return referralData;

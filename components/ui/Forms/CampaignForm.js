@@ -239,6 +239,25 @@ const CampaignForm = ({ edit, setupMode }) => {
                         <div className="relative flex items-start">
                           <div className="flex items-center h-5">
                             <input
+                              id="campaign_public"
+                              name="campaign_public"
+                              type="checkbox"
+                              className="focus:ring-primary h-6 w-6 text-secondary border-2 border-gray-300 rounded-full cursor-pointer"
+                              defaultChecked={edit && edit?.campaign_public ? edit?.campaign_public : true}
+                            />
+                          </div>
+                          <div className="ml-3 text-sm">
+                            <label htmlFor="campaign_public" className="text-sm font-medium text-gray-700 cursor-pointer">
+                              Is campaign public?
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="sm:col-span-12">
+                        <div className="relative flex items-start">
+                          <div className="flex items-center h-5">
+                            <input
                               id="default_campaign"
                               name="default_campaign"
                               type="checkbox"

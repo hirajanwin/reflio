@@ -14,6 +14,8 @@ const Button = (props) => {
   //Color styles
   if(props.secondary){
     styles = styles + ' text-white bg-secondary border-secondary-2 hover:bg-secondary-2'
+  } else if(props.gray){
+    styles = styles + ' text-gray-800 bg-gray-300 border-gray-400 hover:bg-gray-400'
   } else {
     styles = styles + ' bg-primary border-primary-2 hover:bg-primary-2'
   }

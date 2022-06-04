@@ -7,6 +7,9 @@ import { useCampaign } from '@/utils/CampaignContext';
 import SEOMeta from '@/components/SEOMeta'; 
 import { postData } from '@/utils/helpers';
 import LoadingDots from '@/components/ui/LoadingDots';
+import {
+  ArrowNarrowLeftIcon
+} from '@heroicons/react/outline';
 
 export default function AffiliateInvitePage() {
   const router = useRouter();
@@ -74,6 +77,18 @@ export default function AffiliateInvitePage() {
   return (
     <>
       <SEOMeta title="Invite affiliates"/>
+      <div className="py-8 border-b-4">
+        <div className="wrapper">
+          <Button
+            href={`/dashboard/${router?.query?.companyId}/affiliates`}
+            small
+            gray
+          >
+            <ArrowNarrowLeftIcon className="mr-2 w-6 h-auto"/>
+            <span>Back to affilates</span>
+          </Button>
+        </div>
+      </div>
       <div className="pt-12 mb-6">
         <div className="wrapper">
           <h1 className="text-2xl sm:text-3xl tracking-tight font-extrabold">Invite affiliates</h1>
@@ -106,7 +121,8 @@ export default function AffiliateInvitePage() {
                       <label htmlFor="invite_emails" className="text-xl font-semibold text-gray-900 block">
                         Emails to invite
                       </label>
-                      <p className="mb-2">Separate multiple emails with commas.</p>
+                      <p className="mb-1">Separate multiple emails with commas.</p>
+                      <p className="text-gray-500 italic mb-3 text-sm">You can send to a maximum of <span className="font-semibold">30 emails per invite</span>. To send more than 30 at once, please contact support.</p>
                       <div className="mt-1 flex rounded-md shadow-sm">
                         <textarea
                           required

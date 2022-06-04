@@ -39,7 +39,7 @@ export default function SingleCampaignPage() {
             <Button
               href={`/dashboard/${router?.query?.companyId}/campaigns`}
               small
-              secondary
+              gray
             >
               <ArrowNarrowLeftIcon className="mr-2 w-6 h-auto"/>
               <span>Back to campaigns</span>
@@ -78,11 +78,11 @@ export default function SingleCampaignPage() {
                         <p className="mb-1">
                           Affiliates can join your campaign using the link below:
                         </p>
-                        <CopyToClipboard text={`https://affiliates.reflio.com/invite/${activeCompany?.company_handle}`} onCopy={() => toast.success('URL copied to clipboard')}>
+                        <CopyToClipboard text={`${process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL}/invite/${activeCompany?.company_handle}`} onCopy={() => toast.success('URL copied to clipboard')}>
                           <input 
                             type="text"
                             className="flex w-full max-w-lg cursor-pointer min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 border-gray-300 bg-white"
-                            value={`https://affiliates.reflio.com/invite/${activeCompany?.company_handle}`}
+                            value={`${process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL}/invite/${activeCompany?.company_handle}`}
                           />
                         </CopyToClipboard>
                         <p className="mt-3">
