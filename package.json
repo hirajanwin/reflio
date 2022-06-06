@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "stripe:listen": "stripe listen --forward-to=localhost:3000/api/webhooks --company-name=saas-starter",
-    "js": "parcel build reflio.js -o reflio.min.js --out-dir public/js"
+    "js": "uglifyjs ./reflio.js -c --mangle --no-annotations --webkit -o ./public/js/reflio.min.js"
   },
   "dependencies": {
     "@babel/preset-env": "^7.16.11",
@@ -47,7 +47,8 @@
     "postcss": "^8.4.6",
     "postcss-flexbugs-fixes": "5.0.2",
     "postcss-preset-env": "6.7.0",
-    "prettier": "2.2.1"
+    "prettier": "2.2.1",
+    "uglify-js": "^3.16.0"
   },
   "prettier": {
     "arrowParens": "always",

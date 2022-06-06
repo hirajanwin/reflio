@@ -33,6 +33,9 @@ const campaignDetails = async (req, res) => {
   } catch (error) {
     console.log("Could not parse body")
   }
+
+  console.log(body)
+  
   let filteredReferer = null;
   if(headers?.origin) {
     filteredReferer = headers.origin.replace(/(^\w+:|^)\/\//, '').replace('www.', '');

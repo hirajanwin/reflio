@@ -292,7 +292,7 @@ class rfl {
         #reflio-content-bottom span {
           font-weight: bold;
         }
-        #eflio-buttons {
+        #reflio-buttons {
           width: 100%;
         }
         #reflio-discount-code {
