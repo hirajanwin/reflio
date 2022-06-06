@@ -24,8 +24,7 @@ async function buffer(readable) {
 const relevantEvents = new Set([
   'account.application.deauthorized',
   'account.updated',
-  'checkout.session.expired',
-  'checkout.session.completed'
+  'charge.succeeded'
 ]);
 
 const customerEvents = async (req, res) => {
@@ -44,6 +43,8 @@ const customerEvents = async (req, res) => {
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
+    console.log(event?.data?.object);
+
     if (relevantEvents.has(event.type)) {
       try {
         switch (event.type) {
@@ -57,7 +58,7 @@ const customerEvents = async (req, res) => {
             await checkoutSessionComplete(event?.data?.object, event?.account);
             break;
           case 'account.application.deauthorized':
-            if(event.data.object?.name === 'Recover.so'){
+            if(event.data.object?.name === 'Reflio'){
               await deleteIntegrationFromDB(event?.account);
               break;
             } else {

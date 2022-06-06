@@ -4,13 +4,14 @@ import { useCompany } from '@/utils/CompanyContext';
 import Button from '@/components/ui/Button';
 import LoadingDots from '@/components/ui/LoadingDots';
 import { useRouter } from 'next/router';
+import toast from 'react-hot-toast';
 
 const CampaignForm = ({ edit, setupMode }) => {
 
   const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [rewardType, setRewardType] = useState('percentage');
+  const [discountType, setDiscountType] = useState('percentage');
   const { activeCompany } = useCompany();
   const { user } = useUser();
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
@@ -36,11 +37,9 @@ const CampaignForm = ({ edit, setupMode }) => {
 
       await editCampaign(edit?.campaign_id, data).then((result) => {
         if(result === "success"){
-          setErrorMessage(false);
           router.replace(`/dashboard/${router?.query?.companyId}/campaigns/${edit?.campaign_id}`)
-  
         } else {
-          setErrorMessage(true);
+          toast.error('There was an error when creating your campaign, please try again later.');
         }
   
         setLoading(false);
@@ -50,23 +49,28 @@ const CampaignForm = ({ edit, setupMode }) => {
 
       await newCampaign(user, data, router?.query?.companyId).then((result) => {
         if(result === "success"){
-          setErrorMessage(false);
           if(setupMode){
             router.replace(`/dashboard/${router?.query?.companyId}/setup/add`)
           } else {
             router.replace(`/dashboard/${router?.query?.companyId}/campaigns`)
           }
         } else {
-          setErrorMessage(true);
+          toast.error('There was an error when creating your campaign, please try again later.');
         }
   
         setLoading(false);
       });
 
     }
-
-
   };
+
+  if(edit && edit?.reward_type !== null && edit?.reward_type !== rewardType){
+    setRewardType(edit?.reward_type);
+  }
+
+  if(edit && edit?.discount_type !== null && edit?.discount_type !== discountType){
+    setDiscountType(edit?.discount_type);
+  }
 
   return(
     <div>
@@ -101,7 +105,7 @@ const CampaignForm = ({ edit, setupMode }) => {
                           Reward type
                         </label>
                         <div className="mt-1 flex rounded-md shadow-sm">
-                          <select defaultValue={edit && edit?.commission_type} onChange={e=>{setRewardType(e.target.value)}} className="rounded-xl border-2 border-gray-300 outline-none p-4 w-full" required="required" name="commission_type" id="commission_type">
+                          <select defaultValue={rewardType ? rewardType : edit && edit?.commission_type} onChange={e=>{setRewardType(e.target.value)}} className="rounded-xl border-2 border-gray-300 outline-none p-4 w-full" required="required" name="commission_type" id="commission_type">
                             <option value="percentage">Percentage of sale</option>
                             <option value="fixed">Fixed amount</option>
                           </select>
@@ -234,68 +238,136 @@ const CampaignForm = ({ edit, setupMode }) => {
                           />
                         </div>
                       </div> */}
-
-                      <div className="sm:col-span-12">
-                        <div className="relative flex items-start">
-                          <div className="flex items-center h-5">
-                            <input
-                              id="campaign_public"
-                              name="campaign_public"
-                              type="checkbox"
-                              className="focus:ring-primary h-6 w-6 text-secondary border-2 border-gray-300 rounded-full cursor-pointer"
-                              defaultChecked={edit && edit?.campaign_public ? edit?.campaign_public : true}
-                            />
-                          </div>
-                          <div className="ml-3 text-sm">
-                            <label htmlFor="campaign_public" className="text-sm font-medium text-gray-700 cursor-pointer">
-                              Is campaign public?
-                            </label>
-                          </div>
-                        </div>
+                  <div className="sm:col-span-12 mt-2">
+                    <div className="relative flex items-start">
+                      <div className="flex items-center h-5">
+                        <input
+                          id="campaign_public"
+                          name="campaign_public"
+                          type="checkbox"
+                          className="focus:ring-primary h-6 w-6 text-secondary border-2 border-gray-300 rounded-full cursor-pointer"
+                          defaultChecked={edit && edit?.campaign_public ? edit?.campaign_public : true}
+                        />
                       </div>
-
-                      <div className="sm:col-span-12">
-                        <div className="relative flex items-start">
-                          <div className="flex items-center h-5">
-                            <input
-                              id="default_campaign"
-                              name="default_campaign"
-                              type="checkbox"
-                              className="focus:ring-primary h-6 w-6 text-secondary border-2 border-gray-300 rounded-full cursor-pointer"
-                              defaultChecked={edit && edit?.default_campaign ? true : false}
-                            />
-                          </div>
-                          <div className="ml-3 text-sm">
-                            <label htmlFor="default_campaign" className="text-sm font-medium text-gray-700 cursor-pointer">
-                              Set as default campaign
-                            </label>
-                          </div>
-                        </div>
+                      <div className="ml-3 text-sm">
+                        <label htmlFor="campaign_public" className="text-sm font-medium text-gray-700 cursor-pointer">
+                          Campaign is publicly joinable
+                        </label>
                       </div>
                     </div>
                   </div>
-
-                  {
-                    errorMessage &&
-                    <div className="bg-red text-center p-4 mt-4 rounded-lg bg-red-600">
-                      <p className="text-white font-medium">There was an error when creating your campaign, please try again later.</p>
                     </div>
-                  }
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div className="text-center -mb-5">
+              <button type="button" onClick={e=>{showAdvancedOptions ? setShowAdvancedOptions(false) : setShowAdvancedOptions(true)}} className="inline-flex bg-white p-3 text-sm font-semibold border-4 border-gray-300 rounded-lg mx-auto">
+                {showAdvancedOptions ? '- Hide advanced options' : '+ Show advanced options'}
+              </button>
+            </div>
+
+            <div className="bg-gray-200 border-t-4 px-6 py-10 space-y-8">
+              <div className="sm:col-span-12">
+                <div>
+                  <p className="text-xl font-bold mb-1">Give new customers a discount</p>
+                  <p className="text-md mb-5">Enter the details of a discount code that was created in your Stripe account. Adding a discount code <span className="font-semibold">greatly increases conversion rates</span> for both referral sales, and EU based users giving cookie consent.</p>
+                  <div>
+                    <div className="space-y-4">
+                      <div className="mt-1 flex rounded-md shadow-sm items-center justify-between">
+                        <label for="discount_type" className="min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 border-r-0 rounded-tr-none bg-gray-100 rounded-br-none border-gray-300">Discount type:</label>
+                        <select defaultValue={discountType ? discountType : edit && edit?.discount_type} onChange={e=>{setDiscountType(e.target.value)}} className="flex-1 block w-full min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 bor border-r-0 rounded-tl-none rounded-bl-none border-gray-300" required="required" name="discount_type" id="discount_type">
+                          <option value="percentage">Percentage</option>
+                          <option value="fixed">Fixed amount</option>
+                        </select>
+                      </div>
+                      <div className="mt-1 flex rounded-md shadow-sm items-center justify-between">
+                        <label for="discount_code" className="min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 border-r-0 rounded-tr-none bg-gray-100 rounded-br-none border-gray-300">Discount code:</label>
+                        <input
+                          minLength="1"
+                          maxLength="100"
+                          placeholder="e.g. 10OFF"
+                          type="text"
+                          name="discount_code"
+                          id="discount_code"
+                          defaultValue={edit && edit?.discount_code}
+                          autoComplete="discount_code"
+                          className="flex-1 block w-full min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 bor border-r-0 rounded-tl-none rounded-bl-none border-gray-300"
+                        />
+                      </div>
+
+                      {
+                        discountType === 'percentage' &&
+                        <div className="mt-1 flex rounded-md shadow-sm items-center justify-between">
+                          <label for="discount_value" className="min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 border-r-0 rounded-tr-none bg-gray-100 rounded-br-none border-gray-300">Discount percentage:</label>
+                          <input
+                            minLength="1"
+                            maxLength="100"
+                            placeholder="15"
+                            type="number"
+                            name="discount_value"
+                            id="discount_value"
+                            defaultValue={edit && edit?.discount_value}
+                            autoComplete="discount_value"
+                            className="flex-1 block w-full min-w-0 p-3 focus:outline-none sm:text-md border-2 border-r-0 rounded-none border-gray-300"
+                          />
+                          <span className="min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 rounded-tl-none bg-gray-200 rounded-bl-none border-gray-300">%</span>
+                        </div>
+                      }
+
+                      {
+                        discountType === 'fixed' &&
+                        <div className="mt-1 flex rounded-md shadow-sm items-center justify-between">
+                          <label for="discount_value" className="min-w-0 p-3 rounded-xl focus:outline-none sm:text-md border-2 border-r-0 rounded-tr-none bg-gray-100 rounded-br-none border-gray-300">Discount amount: {activeCompany?.company_currency}</label>
+                          <input
+                            minLength="1"
+                            maxLength="100"
+                            placeholder="15"
+                            type="number"
+                            name="discount_value"
+                            id="discount_value"
+                            defaultValue={edit && edit?.discount_value}
+                            autoComplete="discount_value"
+                            className="flex-1 block w-full min-w-0 p-3 focus:outline-none sm:text-md border-2 border-l-0 rounded-tl-none rounded-bl-none rounded-xl border-gray-300"
+                          />
+                        </div>
+                      }
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
+            <div className="border-t-4 px-6 py-8 space-y-8">
+              <div className="sm:col-span-12">
+                <div className="relative flex items-start">
+                  <div className="flex items-center h-5">
+                    <input
+                      id="default_campaign"
+                      name="default_campaign"
+                      type="checkbox"
+                      className="focus:ring-primary h-6 w-6 text-secondary border-2 border-gray-400 rounded-full cursor-pointer"
+                      defaultChecked={edit && edit?.default_campaign ? true : false}
+                    />
+                  </div>
+                  <div className="ml-3 text-sm">
+                    <label htmlFor="default_campaign" className="text-sm font-medium text-gray-700 cursor-pointer">
+                      Set as default campaign
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <div className="border-t-4 px-6 pt-12 pb-8 bg-white flex items-center justify-start relative">
-              <button type="button" onClick={e=>{showAdvancedOptions ? setShowAdvancedOptions(false) : setShowAdvancedOptions(true)}} className="bg-white p-2 text-sm font-semibold border-2 border-gray-200 rounded-lg absolute -top-6 inset-x-1/3">
-                {showAdvancedOptions ? '- Hide advanced options' : '+ Show advanced options'}
-              </button>
+            <div className="border-t-4 px-6 py-8 bg-white flex items-center justify-start relative">
               <Button
                 large
                 primary
                 disabled={loading}
               >
-                <span>{loading ? edit ? 'Editing Campaign...' : 'Creating Campaign...' : edit ? 'Edit Campaign' : 'Create Campaign'}</span>
+                <span>{loading ? edit ? 'Editing Campaign...' : 'Creating Campaign...' : edit ? 'Save Changes' : 'Create Campaign'}</span>
               </Button>
             </div>
           </form>

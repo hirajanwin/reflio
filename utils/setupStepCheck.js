@@ -8,7 +8,7 @@ export default function setupStepCheck() {
   const { userCampaignDetails } = useCampaign();
 
   if(activeCompany){
-    if(activeCompany?.stripe_account_data === null){
+    if(activeCompany?.stripe_account_data === null || activeCompany?.stripe_id === null){
       router.replace(`/dashboard/${router?.query?.companyId}/setup/stripe`);
     }
   

@@ -55,7 +55,7 @@ create table companies (
   company_affiliates jsonb,
   stripe_account_data jsonb,
   domain_verified boolean default false,
-  stripe_id text,
+  stripe_id text unique,
   active_company boolean default false,
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -84,6 +84,9 @@ create table campaigns (
   default_campaign boolean default false,
   campaign_public boolean default true,
   minimum_days_payout integer default 30,
+  discount_code text default null,
+  discount_value integer default null,
+  discount_type commission_types,
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
 alter table campaigns enable row level security;
@@ -141,6 +144,33 @@ create policy "Can view own user data." on referrals for select using (auth.uid(
 create policy "Can update own user data." on referrals for update using (auth.uid() = id);
 create policy "Can insert own user data." on referrals for insert with check (auth.uid() = id);
 create policy "Can delete own user data." on referrals for delete using (auth.uid() = id);
+
+/**
+* Commissions
+* Note: this is a private table that contains a mapping of user IDs and commissions.
+*/
+create table commissions (
+  -- UUID from auth.users
+  id uuid references auth.users not null,
+  commission_id text primary key unique not null default generate_uid(20) unique,
+  company_id text,
+  campaign_id text,
+  affiliate_id text,
+  referral_id text,
+  payment_intent_id text,
+  commission_sale_value integer default null,
+  commission_refund_value integer default null,
+  paid_at text default null,
+  commission_total integer default null,
+  commission_due_date text default null,
+  commission_description text default null,
+  created timestamp with time zone default timezone('utc'::text, now()) not null
+);
+alter table commissions enable row level security;
+create policy "Can view own user data." on commissions for select using (auth.uid() = id);
+create policy "Can update own user data." on commissions for update using (auth.uid() = id);
+create policy "Can insert own user data." on commissions for insert with check (auth.uid() = id);
+create policy "Can delete own user data." on commissions for delete using (auth.uid() = id);
 
 /**
 * This trigger automatically creates a user entry when a new user signs up via Supabase Auth.

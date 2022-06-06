@@ -5,7 +5,7 @@ import { toDateTime } from './helpers';
 // This entire file should be removed and moved to supabase-admin
 // It's not a react hook, so it shouldn't have useDatabase format
 // It should also properly catch and throw errors
-const upsertProductRecord = async (product) => {
+export const upsertProductRecord = async (product) => {
   const productData = {
     id: product.id,
     active: product.active,
@@ -22,7 +22,7 @@ const upsertProductRecord = async (product) => {
   console.log(`Product inserted/updated: ${product.id}`);
 };
 
-const upsertPriceRecord = async (price) => {
+export const upsertPriceRecord = async (price) => {
   const priceData = {
     id: price.id,
     product_id: price.product,
@@ -44,7 +44,7 @@ const upsertPriceRecord = async (price) => {
   console.log(`Price inserted/updated: ${price.id}`);
 };
 
-const createOrRetrieveCustomer = async ({ email, uuid }) => {
+export const createOrRetrieveCustomer = async ({ email, uuid }) => {
   const { data, error } = await supabaseAdmin
     .from('customers')
     .select('stripe_customer_id')
@@ -73,7 +73,7 @@ const createOrRetrieveCustomer = async ({ email, uuid }) => {
 /**
  * Copies the billing details from the payment method to the customer object.
  */
-const copyBillingDetailsToCustomer = async (uuid, payment_method) => {
+export const copyBillingDetailsToCustomer = async (uuid, payment_method) => {
   const customer = payment_method.customer;
   const { name, phone, address } = payment_method.billing_details;
   await stripe.customers.update(customer, { name, phone, address });
@@ -87,7 +87,7 @@ const copyBillingDetailsToCustomer = async (uuid, payment_method) => {
   if (error) throw error;
 };
 
-const manageSubscriptionStatusChange = async (
+export const manageSubscriptionStatusChange = async (
   subscriptionId,
   customerId,
   createAction = false
@@ -150,7 +150,7 @@ const manageSubscriptionStatusChange = async (
     );
 };
 
-const getCampaignData = async (companyId) => {
+export const getCampaignData = async (companyId) => {
   const { data, error } = await supabaseAdmin
     .from('campaigns')
     .select('*')
@@ -161,22 +161,6 @@ const getCampaignData = async (companyId) => {
 
   return data;
 }
-
-//New submission
-const addEmail = async (submissionId, submittedEmail) => {  
-  if(submissionId === null || submittedEmail === null) return "error";
-
-  const { error } = await supabaseAdmin
-    .from('submissions')
-    .update({
-      submitted_email: submittedEmail
-    })
-    .match({ submission_id: submissionId })
-
-  if(error) return "error";
-
-  return "success"
-};
 
 export const getAccountEmail = async (id) => {
   const { data } = await supabaseAdmin
@@ -330,11 +314,237 @@ export const createReferral = async (details) => {
   }
 };
 
-export {
-  upsertProductRecord,
-  upsertPriceRecord,
-  createOrRetrieveCustomer,
-  manageSubscriptionStatusChange,
-  addEmail
+export const campaignInfo = async (code, companyId) => {
+  let campaignData = null;
+  const referralVerify = await verifyReferral(code, companyId);
+
+  if(referralVerify === "error") return "error";
+
+  let { data, error } = await supabaseAdmin
+    .from('campaigns')
+    .select('campaign_name, discount_code, discount_value, discount_type, company_id')
+    .eq('campaign_id', referralVerify?.campaign_id)
+    .single();
+
+  if(error){
+    return "error";
+  }
+
+  if(data){
+    campaignData = data;
+  }
+  
+  let companyData = await supabaseAdmin
+    .from('companies')
+    .select('company_currency')
+    .eq('company_id', campaignData?.company_id)
+    .single();
+
+  if(companyData?.data !== null && companyData?.data?.company_currency){
+    campaignData.company_currency = companyData?.data?.company_currency;
+  }
+
+  console.log(companyData?.data)
+
+  return campaignData;
 };
 
+export const convertReferral = async (referralId, campaignId, affiliateId, cookieDate, email) => {
+  let referralData = await supabaseAdmin
+    .from('referrals')
+    .select('*')
+    .eq('referral_id', referralId)
+    .single();
+
+  let commissionData = null;
+
+  if(referralData?.data && cookieDate){
+
+    let dateToday = new Date();
+    let dateTodayTimestamp = dateToday.getTime();
+    let cookieExpiryDate = new Date(cookieDate);
+    let cookieExpiryDateTimestamp = cookieExpiryDate.getTime();
+
+    if(dateTodayTimestamp > cookieExpiryDateTimestamp){
+      return "expired";
+    }
+
+    //Get stripe ID from company
+    let companyData = await supabaseAdmin
+      .from('companies')
+      .select('stripe_id')
+      .eq('company_id', referralData?.data?.company_id)
+      .single();
+
+    console.log("Stripe ID: ",companyData?.data?.stripe_id)
+
+    if(companyData?.data?.stripe_id){  
+      const customer = await stripe.customers.list({
+        email: email,
+        limit: 1,
+      }, {
+        stripeAccount: companyData?.data?.stripe_id
+      });
+
+      //Payment intent flow
+      if(customer?.data?.length){
+
+        console.log("Customer ID: ",customer?.data[0]?.id)
+
+        if(!customer?.data[0]?.metadata?.reflio_referral_id){
+          //Add parameter to Stripe customer
+          await stripe.customers.update(
+            customer?.data[0]?.id,
+            {metadata: {reflio_referral_id: referralData?.data?.referral_id}},
+            {stripeAccount: companyData?.data?.stripe_id}
+          );
+        } else {
+          console.log("---Customer already has metadata---")
+          console.log(customer?.data[0]?.metadata?.reflio_referral_id)
+        }
+
+        if(customer?.data[0]?.email === email){
+          const paymentIntent = await stripe.paymentIntents.list({
+            customer: customer?.data[0]?.id,
+            limit: 1,
+          }, {
+            stripeAccount: companyData?.data?.stripe_id
+          });
+
+          if(paymentIntent?.data?.length && paymentIntent?.data[0]?.metadata?.reflio_commission_id){
+
+            //Check DB and make sure that the commission is still valid and exists.
+            let commissionFromId = await supabaseAdmin
+              .from('commissions')
+              .select('commission_id, paid_at')
+              .eq('commission_id', paymentIntent?.data[0]?.metadata?.reflio_commission_id)
+              .single();
+
+            if(commissionFromId?.data !== null && commissionFromId?.data?.length){
+              commissionData = commissionFromId?.data[0];
+              console.log("Payment intent has a commission ID")
+            }
+
+            if(commissionFromId?.data !== null && commissionFromId?.data?.length && commissionFromId?.data?.paid_at !== null){
+              console.log("Commission has already been marked as paid.")
+              return "commission_paid";        
+            }
+          }
+
+          if(paymentIntent?.data[0]?.invoice){
+            const invoice = await stripe.invoices.retrieve(
+              paymentIntent?.data[0]?.invoice,
+              {stripeAccount: companyData?.data?.stripe_id}
+            );
+            
+            let invoiceTotal = invoice?.total;
+
+            //----CALCULATE REUNDS----
+            const refunds = await stripe.refunds.list({
+              payment_intent: invoice?.payment_intent,
+              limit: 10,
+            }, {
+              stripeAccount: companyData?.data?.stripe_id
+            });
+
+            if(refunds && refunds?.data?.length > 0){
+              refunds?.data?.map(refund => {
+                if(refund?.amount > 0){
+                  invoiceTotal = parseInt(invoiceTotal - refund?.amount);
+                }
+              })
+            }
+            //----END CALCULATE REUNDS----
+
+            let dueDate = new Date();
+            if(referralData?.data?.minimum_days_payout){
+              dueDate.setDate(dueDate.getDate() + referralData?.data?.minimum_days_payout);
+            } else {
+              dueDate.setDate(dueDate.getDate() + 30)
+            }
+            let dueDateIso = dueDate.toISOString();
+            let commissionAmount = invoiceTotal > 0 ? referralData?.data?.commission_type === "fixed" ? referralData?.data?.commission_value : (parseInt((((parseFloat(invoiceTotal/100)*parseFloat(referralData?.data?.commission_value))/100)*100))) : 0;
+            let invoiceLineItems = [];
+            
+            if(invoice?.paid === false){
+              invoice?.lines?.data?.map(line => {
+                invoiceLineItems?.push(line?.description);
+              })
+            }
+
+            let referralUpdate = await supabaseAdmin
+              .from('referrals')
+              .update({
+                referral_converted: true
+              })
+              .eq('referral_id', referralId);
+
+            if(!referralUpdate?.error){
+
+              let newCommissionValues = null;
+
+              if(commissionData !== null){    
+
+                newCommissionValues = await supabaseAdmin
+                  .from('commissions')
+                  .update({
+                    commission_sale_value: invoiceTotal,
+                    commission_total: commissionAmount,
+                    commission_description: invoiceLineItems.toString()
+                  })
+                  .eq('commission_id', commissionData?.commission_id);
+
+              } else {
+
+                newCommissionValues = await supabaseAdmin.from('commissions').insert({
+                  id: referralData?.data?.id,
+                  company_id: referralData?.data?.company_id,
+                  campaign_id: referralData?.data?.campaign_id,
+                  affiliate_id: referralData?.data?.affiliate_id,
+                  referral_id: referralData?.data?.referral_id,
+                  payment_intent_id: invoice?.payment_intent,
+                  commission_sale_value: invoiceTotal,
+                  commission_total: commissionAmount,
+                  commission_due_date: dueDateIso,
+                  commission_description: invoiceLineItems.toString()
+                });
+              }
+
+              if(newCommissionValues !== null && newCommissionValues?.data){
+
+                //Add parameter to Stripe payment intent
+                await stripe.paymentIntents.update(
+                  invoice?.payment_intent,
+                  {metadata: {reflio_commission_id: newCommissionValues?.data[0]?.commission_id}},
+                  {stripeAccount: companyData?.data?.stripe_id}
+                );
+
+                //Add parameter to Stripe invoice
+                await stripe.invoices.update(
+                  invoice?.id,
+                  {metadata: {reflio_commission_id: newCommissionValues?.data[0]?.commission_id}},
+                  {stripeAccount: companyData?.data?.stripe_id}
+                );
+
+                return newCommissionValues?.data;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return "error";
+};
+
+//Deletes stripe ID from company account
+export const deleteIntegrationFromDB = async (stripeId) => {
+  const { error } = await supabaseAdmin
+  .from('companies')
+  .update({
+    stripe_id: null
+  })
+  .eq({ stripe_id: stripeId })
+  if (error) return "error";
+};

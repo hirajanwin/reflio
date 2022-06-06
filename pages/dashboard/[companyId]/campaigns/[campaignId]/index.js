@@ -28,8 +28,6 @@ export default function SingleCampaignPage() {
     router.replace(`/dashboard/${router?.query?.companyId}/campaigns`)
   }
 
-  console.log(activeCampaign)
-
   return (
     <>
       <SEOMeta title={activeCampaign?.campaign_name}/>
@@ -86,7 +84,7 @@ export default function SingleCampaignPage() {
                           />
                         </CopyToClipboard>
                         <p className="mt-3">
-                          If you'd prefer to manually invite your affiliates, you can invite them <a className="font-semibold underline" href={`/dashboard/${router?.query?.companyId}/affiliates/invite`}>here</a>
+                          If you'd prefer to manually invite your affiliates, you can invite them <a className="font-semibold underline" href={`/dashboard/${router?.query?.companyId}/affiliates/invite`}>here</a>.
                         </p>
                       </div> 
                     </div>

@@ -18,11 +18,11 @@ export default function InnerDashboardPage() {
     }
   }, [userFinderLoaded, user, activeCompany]);
 
-  if(activeCompany?.stripe_account_data === null){
+  if(activeCompany?.stripe_account_data === null || activeCompany?.stripe_id === null){
     router.replace(`/dashboard/${router?.query?.companyId}/setup`);
+  } else {
+    router.replace(`/dashboard/${router?.query?.companyId}/campaigns`);
   }
-
-  router.replace(`/dashboard/${router?.query?.companyId}/campaigns`);
   
   return (
     <>

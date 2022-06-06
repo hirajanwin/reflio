@@ -214,8 +214,6 @@ export const newCampaign = async (user, form, companyId) => {
     .eq('default_campaign', true)
     .eq('company_id', companyId);
 
-  console.log(data);
-
   if(data?.length === 0){
     formFields.default_campaign = true;
   }
@@ -254,6 +252,8 @@ export const editCampaign = async (campaignId, form) => {
       .from('campaigns')
       .update(form)
       .eq('campaign_id', campaignId);
+
+    console.log(error);
   
     if (error) return "error";
   
@@ -264,6 +264,8 @@ export const editCampaign = async (campaignId, form) => {
       .from('campaigns')
       .update(form)
       .eq('campaign_id', campaignId);
+
+      console.log(error);
   
     if (error) return "error";
   
