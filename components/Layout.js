@@ -1,7 +1,6 @@
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import Navbar from '@/components/ui/Navbar';
-import { useCompany } from '@/utils/CompanyContext';
 
 export default function Layout({ children, meta: pageMeta }) {
   const Toaster = dynamic(() =>
@@ -11,8 +10,8 @@ export default function Layout({ children, meta: pageMeta }) {
   const AdminMobileNav = dynamic(() => import('@/components/ui/AdminNavbar/AdminMobileNav'));
   const AdminDesktopNav = dynamic(() => import('@/components/ui/AdminNavbar/AdminDesktopNav'));
   const SimpleNav = dynamic(() => import('@/components/ui/SimpleNav'));
+  const StripeDisconnectNotice = dynamic(() => import('@/components/ui/StripeDisconnectNotice'));
   const router = useRouter();
-  const { activeCompany } = useCompany();
 
   return (
     <>
@@ -60,14 +59,7 @@ export default function Layout({ children, meta: pageMeta }) {
             <div className="h-screen flex overflow-hidden">
               <AdminDesktopNav/>
               <div className="flex-1 overflow-auto focus:outline-none">
-                {
-                  activeCompany && activeCompany !== null && activeCompany?.company_id && activeCompany?.stripe_id === null && activeCompany?.stripe_account_data !== null &&
-                  <div className="bg-red-500 text-center text-white py-4 font-semibold">
-                    <div className="wrapper">
-                      <p>Your Stripe account is no longer connected and is not sending data. <a href={`/dashboard/${activeCompany?.company_id}/setup/stripe`} className="font-bold underline">Please reconnect your account</a> so that no data is missed, and referral data is tracked.</p>
-                    </div>
-                  </div>
-                }
+                <StripeDisconnectNotice/>
                 <AdminMobileNav/>
                 <main className="flex-1 relative pb-8 z-0 overflow-y-auto">
                   <>
