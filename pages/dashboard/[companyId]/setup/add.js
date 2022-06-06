@@ -17,7 +17,7 @@ export default function TrackingSetupPage() {
   }, [userFinderLoaded, user]);
 
   const embedCode = 
-  `<script async src='https://reflio.com/js/go.js' data-reflio='${router?.query?.companyId}'></script>`;
+  `<script async src='https://reflio.com/js/reflio.js' data-reflio='${router?.query?.companyId}'></script>`;
   
   return (
     <>

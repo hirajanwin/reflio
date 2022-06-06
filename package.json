@@ -6,7 +6,8 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "stripe:listen": "stripe listen --forward-to=localhost:3000/api/webhooks --company-name=saas-starter"
+    "stripe:listen": "stripe listen --forward-to=localhost:3000/api/webhooks --company-name=saas-starter",
+    "js": "parcel build reflio.js -o reflio.min.js --out-dir public/js"
   },
   "dependencies": {
     "@babel/preset-env": "^7.16.11",

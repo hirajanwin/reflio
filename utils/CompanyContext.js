@@ -11,7 +11,7 @@ export const CompanyContextProvider = (props) => {
   let value;
 
   useEffect(() => {
-    if (userFinderLoaded && getCompanies && user && userCompanyDetails === null && router?.query?.companyId) {
+    if (userFinderLoaded && getCompanies && user && userCompanyDetails === null) {
       Promise.allSettled([getCompanies(user?.id)]).then(
         (results) => {
           setUserCompanyDetails(Array.isArray(results[0].value) ? results[0].value : [results[0].value])
