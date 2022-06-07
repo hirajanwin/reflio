@@ -5,14 +5,15 @@ import { useUser } from '@/utils/useUser';
 import Link from 'next/link';
 import Button from '@/components/ui/Button'; 
 
-const Navbar = () => {
+export default function Navbar() {
 
   const { user } = useUser();
   const [active, setActive] = useState(false);
+  const navClass = 'lg:text-lg font-medium hover:underline mx-4';
 
   return (
-    <div className="sticky top-0 z-50">
-      <div className="py-6 wrapper wrapper-max">
+    <div className="bg-gray-50 sticky top-0 z-50 border-b-2 border-gray-200">
+      <div className="py-4 wrapper">
         <div className="flex justify-between">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
@@ -20,31 +21,43 @@ const Navbar = () => {
                 href="/"
               >
                 <a>
-                  <Logo className="h-8 md:h-12 w-auto"/>
+                  <Logo className="h-8 lg:h-10 w-auto"/>
                 </a>
               </Link>
             </div>
           </div>
 
-          <div className="hidden md:flex items-center">
+          <div className="hidden lg:flex items-center">
             <nav className="flex items-center justify-center">
-              {/* <a
+              <a
                 href="/#features"
-                className="text-md lg:text-lg hover:underline mx-4 tracking-tight"
+                className={navClass}
               >
                 Features
               </a>
               <a
                 href="/#pricing"
-                className="text-md lg:text-lg hover:underline mx-4 tracking-tight"
+                className={navClass}
+              >
+                Why Reflio
+              </a>
+              <a
+                href="/#pricing"
+                className={navClass}
               >
                 Pricing
-              </a> */}
+              </a>
+              <a
+                href="/#pricing"
+                className={navClass}
+              >
+                Docs & Guides
+              </a>
             </nav>
           </div>
 
-          {/* <button
-            className='inline-flex rounded md:hidden outline-none'
+          <button
+            className='inline-flex rounded lg:hidden outline-none'
             onClick={e=>{active ? setActive(false) : setActive(true) }}
           >
             {
@@ -52,24 +65,24 @@ const Navbar = () => {
                 <XIcon className="w-8 h-auto"/>
               : <MenuIcon className="w-8 h-auto"/>
             }
-          </button> */}
+          </button>
 
-          {/* {
+          {
             active &&
             <div className="origin-top-right absolute left-0 top-auto overflow-hidden mt-12 w-full shadow-xl border-t-4 border-gray-200 bg-white z-50">
               <a className="block p-5 text-md bg:text-white hover:bg-gray-100 border-b-2 border-gray-200" href="/#features">Features</a>
               <a className="block p-5 text-md bg:text-white hover:bg-gray-100 border-b-2 border-gray-200" href="/#pricing">Pricing</a>
               <a className="block p-5 text-md bg:text-white hover:bg-gray-100 font-semibold" href={user ? '/dashboard' : '/signup'}>{user ? 'Dashboard' : 'Get Started For Free' }</a>
             </div>
-          } */}
+          }
 
-          <div className="hidden md:flex items-center">
+          <div className="hidden lg:flex items-center">
             {
               user ?
               <div className="flex-shrink-0">
                 <Button
-                  large
-                  secondary
+                  small
+                  primary
                   href="/dashboard"
                 >
                   <span>View Dashboard</span>
@@ -78,11 +91,11 @@ const Navbar = () => {
               :
                 <div className="flex-shrink-0">
                   <Button
-                    large
-                    secondary
-                    href="#"
+                    small
+                    primary
+                    href="/signup"
                   >
-                    <span>Coming Soon</span>
+                    <span>Get started for free</span>
                   </Button>
                 </div>        
             }
@@ -92,5 +105,3 @@ const Navbar = () => {
     </div>
   );
 };
-
-export default Navbar;

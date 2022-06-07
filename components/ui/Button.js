@@ -4,11 +4,13 @@ const Button = (props) => {
 
   //Sizing styles
   if(props.small){
-    styles = styles + ' px-4 py-2 text-xs md:text-sm'
+    styles = styles + ' px-4 py-2 text-sm md:text-sm'
   } else if(props.medium){
-    styles = styles + ' px-6 py-3 text-xs md:text-lg'
+    styles = styles + ' px-6 py-3 text-sm md:text-lg'
+  } else if(props.xlarge){
+    styles = styles + ' px-8 py-4 text-sm md:text-2xl'
   } else {
-    styles = styles + ' px-8 py-3 text-xs md:text-xl'
+    styles = styles + ' px-8 py-3 text-sm md:text-xl'
   }
 
   //Color styles

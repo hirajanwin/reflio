@@ -43,7 +43,7 @@ export default function Layout({ children, meta: pageMeta }) {
           }}
         />
         {
-          router.pathname !== '/' && router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 &&
+          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 &&
           <Navbar />
         }
         { 

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .wrapper {
-  @apply mx-auto w-11/12 clear-both;
+  @apply mx-auto w-11/12 clear-both max-w-screen-xl;
 }
 
 .wrapper-max {
