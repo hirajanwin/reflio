@@ -55,12 +55,22 @@ export default function Index() {
           </div>
         </div>
       </div>
-      <div className="pt-12 pb-24 bg-gradient-to-b from-gray-50 to-gray-200">
+      <div className="py-24 bg-gradient-to-b from-gray-50 to-gray-200">
+        <div className="wrapper">
+          <div className="grid grid-cols-1 md:grid-cols-2 items-center space-y-8 md:space-y-0 md:space-x-16">
+            <div>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-5 font-semibold">SEO friendly links to share with your affiliates</h2>
+              <p className="text-2xl">With Reflio, for each campaign you create you can send potential affiliates your very own signup page and brand it with your own logo and colours. These pages are fully SEO friendly and optimised for speed.</p>
+            </div>
+            <div>
+              <img className="w-full h-auto rounded-xl shadow-lg" src="/invite-screenshot.webp" alt="Screenshot of join campaign feature"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="py-24 bg-gradient-to-b from-gray-200 to-gray-50">
         <div className="wrapper">
           <div>
-            <div className="mb-6 text-center">
-              <h2 className="text-3xl sm:text-4xl lg:text-6xl font-semibold">Our wall of love</h2>
-            </div>
             <Testimonials/>
           </div>
         </div>
