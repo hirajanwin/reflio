@@ -4,7 +4,7 @@
       url(../public/fonts/TTInterfaces-Regular.woff) format('woff');
   font-weight: 300;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
@@ -13,7 +13,7 @@
       url(../public/fonts/TTInterfaces-Medium.woff) format('woff');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
@@ -22,7 +22,7 @@
       url(../public/fonts/TTInterfaces-Bold.woff) format('woff');
   font-weight: 500;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @tailwind base;
