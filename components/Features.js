@@ -50,7 +50,7 @@ export default function Features() {
   
   return(
     <div id="features">
-      <dl className="space-y-10 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-20 lg:grid-cols-2 lg:gap-x-20">
+      <dl className="gap-y-10 grid grid-cols-1 gap-x-0 md:gap-y-20 md:grid-cols-2 md:gap-x-20">
         {features.map((feature) => (
           <div>
             <dt>
