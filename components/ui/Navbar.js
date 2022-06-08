@@ -15,7 +15,7 @@ export default function Navbar() {
     <>
       <div className="bg-secondary py-4">
         <div className="wrapper text-center">
-          <p className="text-lg text-white font-semibold">We're currently in public beta whilst receiving feedback from users. <a className="underline" href="#">Learn more.</a></p>
+          <p className="text-lg text-white font-semibold">📢&nbsp;We're currently in public beta!</p>
         </div>
       </div>
       <div className="bg-gray-50 sticky top-0 z-50 border-b-2 border-gray-200">
@@ -54,7 +54,7 @@ export default function Navbar() {
                   Pricing
                 </a>
                 <a
-                  href="/#pricing"
+                  href="https://reflio.com/resources"
                   className={navClass}
                 >
                   Docs & Guides

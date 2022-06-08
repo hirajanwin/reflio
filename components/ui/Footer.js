@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="wrapper py-14">
         <div>
           <div className="space-y-5">
-            <Logo className="h-6 w-auto grayscale mx-auto"/>
+            <Logo className="h-6 w-auto mx-auto"/>
             <p className="text-gray-500 text-base">
               Create a privacy-friendly referral program for your SaaS.
             </p>
