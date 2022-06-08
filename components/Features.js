@@ -50,17 +50,17 @@ export default function Features() {
   
   return(
     <div id="features">
-      <dl className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-20 lg:grid-cols-2 lg:gap-x-20">
+      <dl className="space-y-10 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-20 lg:grid-cols-2 lg:gap-x-20">
         {features.map((feature) => (
           <div>
             <dt>
               {
                 feature.icon &&
-                <feature.icon className="w-12 h-auto mb-3"/>
+                <feature.icon className="w-8 md:w-12 h-auto mb-3"/>
               }
-              <p className="text-3xl font-semibold">{feature.name}</p>
+              <p className="text-xl md:text-3xl font-semibold">{feature.name}</p>
             </dt>
-            <dd className="mt-2 text-2xl">{feature.description}</dd>
+            <dd className="mt-2 text-lg md:text-2xl">{feature.description}</dd>
           </div>
         ))}
       </dl>

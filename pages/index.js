@@ -6,7 +6,7 @@ import Testimonials from '@/components/Testimonials';
 export default function Index() {
   return(
     <>
-      <div className="relative py-24 bg-gradient-to-b from-gray-50 to-gray-200">
+      <div className="relative py-14 md:py-24 bg-gradient-to-b from-gray-50 to-gray-200">
         <div className="wrapper text-center">
           <div className="max-w-4xl mx-auto">
             <div className="mb-10">
@@ -48,27 +48,38 @@ export default function Index() {
           </div>
         </div>
       </div>
-      <div className="pt-48 pb-24 bg-gradient-to-b from-gray-200 to-gray-50 border-t-8 border-gray-300">
+      <div className="py-14 md:pt-48 md:py-24 bg-gradient-to-b from-gray-200 to-gray-50 border-t-8 border-gray-300">
         <div className="wrapper">
           <div>
             <Features/>
           </div>
         </div>
       </div>
-      <div className="py-24 bg-gradient-to-b from-gray-50 to-gray-200">
-        <div className="wrapper">
-          <div className="grid grid-cols-1 md:grid-cols-2 items-center space-y-8 md:space-y-0 md:space-x-16">
-            <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-5 font-semibold">SEO friendly links to share with your affiliates</h2>
-              <p className="text-2xl">With Reflio, for each campaign you create you can send potential affiliates your very own signup page and brand it with your own logo and colours. These pages are fully SEO friendly and optimised for speed.</p>
-            </div>
-            <div>
-              <img className="w-full h-auto rounded-xl shadow-lg" src="/invite-screenshot.webp" alt="Screenshot of join campaign feature"/>
+      <div className="wrapper mb-24">
+        <div className="py-14 md:py-24 px-20 bg-white rounded-xl shadow-lg">
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 items-center space-y-8 md:space-y-0 md:space-x-16">
+              <div>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl mb-5 font-semibold">SEO friendly links to share with your affiliates</h2>
+                <p className="text-2xl">With Reflio, for each campaign you create you can send potential affiliates your very own signup page and brand it with your own logo and colours. These pages are fully SEO friendly and optimised for speed.</p>
+                <div className="mt-12">
+                  <Button
+                    xlarge
+                    primary
+                    href="/signup"
+                  >
+                    <span>Get started for free</span>
+                  </Button>
+                </div>
+              </div>
+              <div>
+                <img className="w-full h-auto rounded-xl shadow-lg" src="/invite-screenshot.webp" alt="Screenshot of join campaign feature"/>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="py-24 bg-gradient-to-b from-gray-200 to-gray-50">
+      <div className="py-14 md:py-24 bg-gradient-to-b from-gray-200 to-gray-50">
         <div className="wrapper">
           <div>
             <Testimonials/>
