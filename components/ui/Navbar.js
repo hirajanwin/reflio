@@ -99,7 +99,7 @@ export default function Navbar() {
                     <Button
                       small
                       primary
-                      href="/signup"
+                      href="#"
                     >
                       <span>Get started for free</span>
                     </Button>

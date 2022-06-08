@@ -114,13 +114,14 @@ const SignUp = () => {
 
             <div>
               <button
-                type="submit"
+                disabled={true}
+                type="button"
                 className="group relative w-full flex justify-center py-3 px-5 border border-transparent text-md font-medium rounded-md text-white bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 "
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <LockClosedIcon className="h-5 w-5 " aria-hidden="true" />
                 </span>
-                Sign up
+                Coming soon
               </button>
             </div>
 
@@ -144,7 +145,7 @@ const SignUp = () => {
               <span className="ml-2">Sign up with Twitter</span>
             </button> */}
 
-            <button
+            {/* <button
               type="button"
               className="flex align-center justify-center h-full min-h-full w-full font-medium rounded-lg m-0 p-3 px-5 border-2 hover:bg-accents-9 bg-white text-primary"
               disabled={loading}
@@ -152,7 +153,7 @@ const SignUp = () => {
             >
               <Google />
               <span className="ml-2">Sign up with Google</span>
-            </button>
+            </button> */}
 
             {message.content && (
               <div

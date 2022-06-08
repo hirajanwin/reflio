@@ -21,7 +21,7 @@ export default function Index() {
               <Button
                 xlarge
                 primary
-                href="/signup"
+                href="#"
               >
                 <span>Get started for free</span>
               </Button>
@@ -69,7 +69,7 @@ export default function Index() {
                   <Button
                     xlarge
                     primary
-                    href="/signup"
+                    href="#"
                   >
                     <span>Get started for free</span>
                   </Button>
@@ -96,7 +96,7 @@ export default function Index() {
                   <Button
                     xlarge
                     primary
-                    href="/signup"
+                    href="#"
                   >
                     <span>Get started for free</span>
                   </Button>
@@ -122,7 +122,7 @@ export default function Index() {
               <Button
                 xlarge
                 primary
-                href="/signup"
+                href="#"
               >
                 <span>Get started for free</span>
               </Button>
