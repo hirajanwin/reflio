@@ -2,7 +2,7 @@ import Logo from '@/components/icons/Logo';
 
 export default function Footer() {
   return (
-    <footer className="border-4 border-gray-200 text-center" aria-labelledby="footer-heading">
+    <footer className="border-t-4 border-gray-200 text-center" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>

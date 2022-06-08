@@ -3,7 +3,7 @@ import Image from 'next/image';
 export default function Testimonials() {
   return(
     <div id="testimonials">
-      <dl className="space-y-10 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:gap-y-20 lg:grid-cols-2 lg:gap-x-20">
+      <dl className="space-y-10 md:grid md:gap-y-20 md:space-y-0 md:grid-cols-2 md:gap-x-20">
         <div>
           <dt>
             <img className="w-14 md:w-16 h-auto rounded-full mb-2" src="/testimonials/maxwellcdavis.jpeg"/>
