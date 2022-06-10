@@ -8,7 +8,7 @@ import { createCommission } from './stripe-helpers';
 // It should also properly catch and throw errors
 export const upsertProductRecord = async (product) => {
   const productData = {
-    id: product.id,
+    product_id: product.id,
     active: product.active,
     name: product.name,
     description: product.description,
