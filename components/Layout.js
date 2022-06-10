@@ -43,11 +43,11 @@ export default function Layout({ children, meta: pageMeta }) {
           }}
         />
         {
-          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 &&
+          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 && router.pathname.indexOf('/dashboard/create-team') === -1 &&
           <Navbar />
         }
         { 
-          router.pathname === '/dashboard/add-company' &&
+          router.pathname === '/dashboard/add-company' || router.pathname === '/dashboard/create-team' &&
           <SimpleNav/>
         }
         {
@@ -55,7 +55,9 @@ export default function Layout({ children, meta: pageMeta }) {
             <main id="skip">{children}</main>
           : router.pathname === '/dashboard/add-company' ?
             <main id="skip">{children}</main>
-          :
+          : router.pathname === '/dashboard/create-team' ?
+            <main id="skip">{children}</main>
+          : 
             <div className="h-screen flex overflow-hidden">
               <AdminDesktopNav/>
               <div className="flex-1 overflow-auto focus:outline-none">
@@ -70,7 +72,7 @@ export default function Layout({ children, meta: pageMeta }) {
             </div>
         }
         {
-          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 &&
+          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 && router.pathname.indexOf('/dashboard/create-team') === -1 &&
           <Footer />
         }
       </>

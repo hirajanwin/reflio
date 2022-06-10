@@ -1,13 +1,16 @@
 import { useEffect, useState, createContext, useContext } from 'react';
 import { supabase } from './supabase-client';
 import { slugifyString } from '@/utils/helpers';
+import { useRouter } from 'next/router';
 
 export const UserContext = createContext();
 
 export const UserContextProvider = (props) => {
+  const router = useRouter();
   const [userLoaded, setUserLoaded] = useState(false);
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
+  const [team, setTeam] = useState(null);
   const [userFinderLoaded, setUserFinderLoaded] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
   const [subscription, setSubscription] = useState(null);
@@ -30,7 +33,7 @@ export const UserContextProvider = (props) => {
       authListener.unsubscribe();
     };
   }, []);
-
+  const getTeam = () => supabase.from('teams').select('*').single();
   const getUserDetails = () => supabase.from('users').select('*').single();
   const getSubscription = () =>
     supabase
@@ -41,13 +44,14 @@ export const UserContextProvider = (props) => {
 
   useEffect(() => {
     if (user) {
-      Promise.allSettled([getUserDetails(), getSubscription()]).then(
+      Promise.allSettled([getTeam(), getUserDetails(), getSubscription()]).then(
         (results) => {
-          setUserDetails(results[0].value.data);
-          setSubscription(results[1].value.data);
+          setTeam(results[0].value.data);
+          setUserDetails(results[1].value.data);
+          setSubscription(results[2].value.data);
 
-          if(results[1].value.data){
-            setPlanDetails(results[1].value.data.prices.products.name);
+          if(results[2].value.data !== null){
+            setPlanDetails(results[2].value.data.prices.products.name);
           } else {
             setPlanDetails('free');
           }
@@ -62,6 +66,7 @@ export const UserContextProvider = (props) => {
   const value = {
     session,
     user,
+    team,
     userDetails,
     userLoaded,
     subscription,
@@ -76,6 +81,7 @@ export const UserContextProvider = (props) => {
       return supabase.auth.signOut();
     }
   };
+
   return <UserContext.Provider value={value} {...props} />;
 };
 
@@ -133,16 +139,52 @@ export const getAffiliates = async (companyId) => {
   return data;
 };
 
+//Create company
+export const newTeam = async (user, form) => {
+  if(!form?.team_name) return "error";
+
+  const { data } = await supabase.from('teams').insert({
+    id: user?.id,
+    team_name: form?.team_name
+  });
+
+  if(data && data[0]?.team_id){
+    const userUpdate = await supabase
+      .from('users')
+      .update({
+        team_id: data[0]?.team_id
+      })
+      .eq('id', user?.id);
+
+    if(userUpdate?.data && userUpdate?.data !== null){
+      const memberCreate = await supabase.from('members').insert({
+        id: user?.id,
+        team_id: data[0]?.team_id
+      });
+
+      console.log("memberCreate:")
+      console.log(memberCreate)
+    }
+
+    return "success";
+  }
+
+  return "error";
+};
+
 export const newCompany = async (user, form) => {
   if(!form?.company_handle || !form?.company_url || !form?.company_name) return "error";
 
   const { data, error } = await supabase.from('companies').insert({
     id: user?.id,
+    team_id: user?.team_id,
     company_name: form?.company_name,
     company_url: form?.company_url,
     company_handle: form?.company_handle,
     domain_verified: false
   });
+
+  console.log(error);
 
   if (error) {
     if(error?.code === "23505"){

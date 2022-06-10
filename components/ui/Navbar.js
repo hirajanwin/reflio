@@ -13,7 +13,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="bg-secondary py-4">
+      <div className="bg-gradient-to-r from-secondary to-secondary-2 py-4">
         <div className="wrapper text-center">
           <p className="text-lg text-white font-semibold">📢&nbsp;We're currently in public beta!</p>
         </div>

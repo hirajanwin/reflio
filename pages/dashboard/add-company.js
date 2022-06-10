@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 
 export default function AddCompany() {
   const router = useRouter();
-  const { user, userFinderLoaded } = useUser();
+  const { user, userDetails, userFinderLoaded } = useUser();
   const [errorMessage, setErrorMessage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [websiteUrlInput, setWebsiteUrlInput] = useState(null);
@@ -32,7 +32,7 @@ export default function AddCompany() {
 
     setLoading(true);
 
-    await newCompany(user, data).then((result) => {
+    await newCompany(userDetails, data).then((result) => {
       console.log(result);
       if(result[0]?.company_id){
         window.location.href = "/dashboard/"+result[0]?.company_id+"";

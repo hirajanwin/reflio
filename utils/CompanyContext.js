@@ -20,7 +20,7 @@ export const CompanyContextProvider = (props) => {
     }
   });
 
-  if(userCompanyDetails !== null && userCompanyDetails?.length === 0 && !router?.asPath?.includes('add-company')){
+  if(userCompanyDetails !== null && userCompanyDetails?.length === 0 && !router?.asPath?.includes('add-company') && router?.pathname !== '/dashboard/create-team'){
     router.replace('/dashboard/add-company');
   }
   
