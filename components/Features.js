@@ -11,18 +11,6 @@ export default function Features() {
 
   const features = [
     {
-      name: "Automated privacy & GDPR compliance",
-      description: 'All data processed through European-owned infrastructure, and our company is registered in the UK. With Reflio, referrals located in the EU are automatically required to confirm their consent before a cookie is set.',
-      active: true,
-      icon: EyeOffIcon
-    },
-    {
-      name: 'Our embed script is fast',
-      description: "Being under <13kb, our embed code is up to 5x faster than some of our competitors, meaning we're better for your SEO than they are.",
-      active: true,
-      icon: LightningBoltIcon
-    },
-    {
       name: 'Get started in minutes',
       description: 'Quickly connect your SaaS product to Reflio with pre-written code examples. You can instantly take advantage of word of mouth referrals to get higher quality sign ups to your app via your existing users.',
       active: true,
@@ -45,6 +33,18 @@ export default function Features() {
       description: "We're indie hacker friendly. Being indie hackers ourselves, we know that all new projects start from $0 MRR. Reflio starts from just $0/month with a 9% commission per successful referral.",
       active: true,
       icon: CurrencyDollarIcon
+    },
+    {
+      name: "Automated privacy & GDPR compliance",
+      description: 'All data processed through European-owned infrastructure, and our company is registered in the UK. With Reflio, referrals located in the EU are automatically required to confirm their consent before a cookie is set.',
+      active: true,
+      icon: EyeOffIcon
+    },
+    {
+      name: 'Our embed script is fast',
+      description: "Being under <13kb, our embed code is up to 5x faster than some of our competitors, meaning we're better for your SEO than they are.",
+      active: true,
+      icon: LightningBoltIcon
     },
   ];
   

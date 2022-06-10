@@ -11,7 +11,7 @@ export default function Index() {
           <div className="max-w-4xl mx-auto">
             <div className="mb-10">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl mb-7">
-                Create a <span className="italic font-bold">privacy-friendly referral program</span> without breaking the bank.
+                Create a <span className="italic font-bold">referral program</span> without breaking the bank.
               </h1>
               <p className="text-xl sm:text-2xl text-gray-600 font-light">
                 Reflio puts <span className="text-gray-700 font-medium underline">digital privacy first</span>. All referrals are processed through <span className="text-gray-700 font-medium underline">European-owned infrastructure</span>, and our company is registered in the UK. With Reflio, referrals located in the EU are <span className="text-gray-600 font-normal underline">automatically required to confirm their consent</span> before a cookie is set. 

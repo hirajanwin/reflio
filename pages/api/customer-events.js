@@ -31,9 +31,7 @@ const customerEvents = async (req, res) => {
   if (req.method === 'POST') {
     const buf = await buffer(req);
     const sig = req.headers['stripe-signature'];
-    const webhookSecret =
-      process.env.STRIPE_CUSTOMER_WEBHOOK_SECRET_LIVE ??
-      process.env.STRIPE_CUSTOMER_WEBHOOK_SECRET;
+    const webhookSecret = process.env.STRIPE_CUSTOMER_WEBHOOK_SECRET;
     let event;
 
     try {
