@@ -2,6 +2,7 @@ import Button from '@/components/ui/Button';
 import { CheckCircleIcon } from '@heroicons/react/solid';
 import Features from '@/components/Features';
 import Testimonials from '@/components/Testimonials';
+import Image from 'next/image';
 
 export default function Index() {
   return(
@@ -43,8 +44,8 @@ export default function Index() {
           </div>
           <div className="hidden md:block mt-16 -mb-40">
             <div className="max-w-4xl mx-auto">
-              <div className="px-0 w-full h-auto bg-white rounded-3xl shadow-2xl mx-auto overflow-hidden">
-                <img src="platform-screenshot.webp" alt="GummySearch Audience Discovery" className="mt-0 w-full h-auto" />
+              <div className="px-0 w-full h-96 bg-white rounded-3xl shadow-2xl mx-auto overflow-hidden relative">
+                <Image layout="fill" objectFit="cover" src="/platform-screenshot.webp" alt="Screenshot of Reflio dashboard" className="mt-0 w-full h-auto" />
               </div>
             </div>
           </div>
