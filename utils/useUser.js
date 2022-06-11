@@ -63,6 +63,10 @@ export const UserContextProvider = (props) => {
     }
   }, [user]);
 
+  // if(user && session && team === null && router?.pathname !== '/dashboard/create-team'){
+  //   router.replace('/dashboard/create-team');
+  // }
+
   const value = {
     session,
     user,
@@ -249,7 +253,11 @@ export const newCampaign = async (user, form, companyId) => {
   if(formFields.default_campaign){
     formFields.default_campaign = true;
   }
-  
+
+  if(!formFields?.team_id){
+    formFields.team_id = user?.team_id;
+  }
+
   let { data } = await supabase
     .from('campaigns')
     .select('*')

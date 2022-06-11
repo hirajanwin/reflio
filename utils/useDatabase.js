@@ -45,7 +45,7 @@ export const upsertPriceRecord = async (price) => {
   console.log(`Price inserted/updated: ${price.id}`);
 };
 
-export const createOrRetrieveCustomer = async ({ email, teamId }) => {
+export const createOrRetrieveCustomer = async ({ id, teamId, email }) => {
   const { data, error } = await supabaseAdmin
     .from('customers')
     .select('stripe_customer_id')
@@ -63,7 +63,7 @@ export const createOrRetrieveCustomer = async ({ email, teamId }) => {
     // Now insert the customer ID into our Supabase mapping table.
     const { error: supabaseError } = await supabaseAdmin
       .from('customers')
-      .insert([{ team_id: teamId, stripe_customer_id: customer.id }]);
+      .insert([{ user_id: id, team_id: teamId, stripe_customer_id: customer.id }]);
     if (supabaseError) throw supabaseError;
     console.log(`New customer created and inserted for ${teamId}.`);
     return customer.id;
@@ -95,11 +95,11 @@ export const manageSubscriptionStatusChange = async (
 ) => {
   // Get customer's teamId from mapping table.
   const {
-    data: { team_id: teamId },
+    data: { team_id: teamId, user_id: userId },
     error: noCustomerError
   } = await supabaseAdmin
     .from('customers')
-    .select('team_id')
+    .select('team_id, user_id')
     .eq('stripe_customer_id', customerId)
     .single();
   if (noCustomerError) throw noCustomerError;
@@ -109,6 +109,7 @@ export const manageSubscriptionStatusChange = async (
   });
   // Upsert the latest status of the subscription object.
   const subscriptionData = {
+    user_id: userId,
     id: subscription.id,
     team_id: teamId,
     metadata: subscription.metadata,

@@ -13,7 +13,7 @@ const CampaignForm = ({ edit, setupMode }) => {
   const [rewardType, setRewardType] = useState('percentage');
   const [discountType, setDiscountType] = useState('percentage');
   const { activeCompany } = useCompany();
-  const { user } = useUser();
+  const { userDetails } = useUser();
   const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -47,7 +47,7 @@ const CampaignForm = ({ edit, setupMode }) => {
 
     } else {
 
-      await newCampaign(user, data, router?.query?.companyId).then((result) => {
+      await newCampaign(userDetails, data, router?.query?.companyId).then((result) => {
         if(result === "success"){
           if(setupMode){
             router.replace(`/dashboard/${router?.query?.companyId}/setup/add`)

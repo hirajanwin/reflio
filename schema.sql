@@ -88,7 +88,7 @@ create table members (
 alter table members enable row level security;
 create policy "Can view own user data." on members for select using ((member_id in (select member_id from users where users.member_id = member_id)) OR (auth.uid() = id));
 create policy "Can update own user data." on members for update using ((member_id in (select member_id from users where users.member_id = member_id)) OR (auth.uid() = id));
-create policy "Can insert own user data." on members for insert with check ((team_id in (select id from users where users.id = id)) OR (id in (select id from invites where auth.uid() = id)));
+create policy "Can insert own user data." on members for insert with check ((team_id in (select team_id from users where users.id = id)) OR (id in (select id from invites where auth.uid() = id)));
 
 /** 
 * Companies
@@ -144,10 +144,10 @@ create table campaigns (
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
 alter table campaigns enable row level security;
-create policy "Can view own user data." on campaigns for select using (team_id in (select team_id from members where members.id = id));
-create policy "Can update own user data." on campaigns for update using (team_id in (select team_id from members where members.id = id));
-create policy "Can insert own user data." on campaigns for insert with check (team_id in (select team_id from members where members.id = id));
-create policy "Can delete own user data." on campaigns for delete using (team_id in (select team_id from members where members.id = id));
+create policy "Can view own user data." on campaigns for select using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can update own user data." on campaigns for update using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can insert own user data." on campaigns for insert with check ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can delete own user data." on campaigns for delete using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
 
 /**
 * Affiliates
@@ -168,10 +168,10 @@ create table affiliates (
   referral_code text default null
 );
 alter table affiliates enable row level security;
-create policy "Can view own user data." on affiliates for select using (team_id in (select team_id from members where members.id = id));
-create policy "Can update own user data." on affiliates for update using (team_id in (select team_id from members where members.id = id));
-create policy "Can insert own user data." on affiliates for insert with check (team_id in (select team_id from members where members.id = id));
-create policy "Can delete own user data." on affiliates for delete using (team_id in (select team_id from members where members.id = id));
+create policy "Can view own user data." on affiliates for select using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can update own user data." on affiliates for update using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can insert own user data." on affiliates for insert with check ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can delete own user data." on affiliates for delete using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
 
 /**
 * Referrals
@@ -196,10 +196,10 @@ create table referrals (
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
 alter table referrals enable row level security;
-create policy "Can view own user data." on referrals for select using (team_id in (select team_id from members where members.id = id));
-create policy "Can update own user data." on referrals for update using (team_id in (select team_id from members where members.id = id));
-create policy "Can insert own user data." on referrals for insert with check (team_id in (select team_id from members where members.id = id));
-create policy "Can delete own user data." on referrals for delete using (team_id in (select team_id from members where members.id = id));
+create policy "Can view own user data." on referrals for select using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can update own user data." on referrals for update using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can insert own user data." on referrals for insert with check ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can delete own user data." on referrals for delete using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
 
 /**
 * Commissions
@@ -224,10 +224,10 @@ create table commissions (
   created timestamp with time zone default timezone('utc'::text, now()) not null
 );
 alter table commissions enable row level security;
-create policy "Can view own user data." on commissions for select using (team_id in (select team_id from members where members.id = id));
-create policy "Can update own user data." on commissions for update using (team_id in (select team_id from members where members.id = id));
-create policy "Can insert own user data." on commissions for insert with check (team_id in (select team_id from members where members.id = id));
-create policy "Can delete own user data." on commissions for delete using (team_id in (select team_id from members where members.id = id));
+create policy "Can view own user data." on commissions for select using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can update own user data." on commissions for update using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can insert own user data." on commissions for insert with check ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
+create policy "Can delete own user data." on commissions for delete using ((team_id in (select team_id from users where users.id = id)) OR (auth.uid() = id));
 
 /**
 * This trigger automatically creates a user entry when a new user signs up via Supabase Auth.
@@ -249,6 +249,7 @@ create trigger on_auth_user_created
 * Note: this is a private table that contains a mapping of user IDs to Stripe customer IDs.
 */
 create table customers (
+  user_id uuid references auth.users not null,
   -- UUID from auth.users
   team_id text references teams not null primary key,
   -- The user's customer ID in Stripe. User must not be able to update this.
@@ -318,6 +319,7 @@ create policy "Allow public read-only access." on prices for select using (true)
 create type subscription_status as enum ('trialing', 'active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'unpaid');
 create table subscriptions (
   -- Subscription ID from Stripe, e.g. sub_1234.
+  user_id uuid references auth.users not null,
   id text primary key,
   team_id text references teams not null,
   -- The status of the subscription object, one of subscription_status type above.
@@ -348,7 +350,7 @@ create table subscriptions (
   trial_end timestamp with time zone default timezone('utc'::text, now())
 );
 alter table subscriptions enable row level security;
-create policy "Can only view own subs data." on subscriptions for select using (team_id in (select team_id from members where members.id = id));
+create policy "Can only view own subs data." on subscriptions for select using ((team_id in (select team_id from users where users.id = user_id)) OR (auth.uid() = user_id));
 
 /**
  * REALTIME SUBSCRIPTIONS
