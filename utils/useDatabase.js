@@ -211,6 +211,7 @@ export const getCompanyFromExternal = async (domain) => {
 export const inviteAffiliate = async (user, companyId, campaignId, emailInvites) => {
   const { error } = await supabaseAdmin.from('affiliates').insert({
     id: user?.id,
+    team_id: user?.team_id,
     company_id: companyId,
     campaign_id: campaignId,
     invite_email: emailInvites
@@ -290,6 +291,7 @@ export const createReferral = async (details) => {
 
     let referralData = { data, error } = await supabaseAdmin.from('referrals').insert({
       id: data?.id,
+      team_id: data?.team_id,
       affiliate_id: details?.affiliate_id,
       affiliate_code: details?.affiliate_code,
       campaign_id: data?.campaign_id,
