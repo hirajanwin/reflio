@@ -10,13 +10,8 @@ export default function Layout({ children, meta: pageMeta }) {
   const AdminMobileNav = dynamic(() => import('@/components/ui/AdminNavbar/AdminMobileNav'));
   const AdminDesktopNav = dynamic(() => import('@/components/ui/AdminNavbar/AdminDesktopNav'));
   const SimpleNav = dynamic(() => import('@/components/ui/SimpleNav'));
+  const StripeDisconnectNotice = dynamic(() => import('@/components/ui/StripeDisconnectNotice'));
   const router = useRouter();
-  const meta = {
-    title: 'Reflio: Create a privacy-friendly referral program for your SaaS.',
-    description: 'Create a privacy-friendly referral program for your SaaS. GDPR Friendly. Based in the UK. European-owned infrastructure.',
-    cardImage: '/og.png',
-    ...pageMeta
-  };
 
   return (
     <>
@@ -48,11 +43,11 @@ export default function Layout({ children, meta: pageMeta }) {
           }}
         />
         {
-          router.pathname !== '/' && router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 &&
+          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 && router.pathname.indexOf('/dashboard/create-team') === -1 &&
           <Navbar />
         }
         { 
-          router.pathname === '/dashboard/add-company' &&
+          router.pathname === '/dashboard/add-company' || router.pathname === '/dashboard/create-team' &&
           <SimpleNav/>
         }
         {
@@ -60,10 +55,13 @@ export default function Layout({ children, meta: pageMeta }) {
             <main id="skip">{children}</main>
           : router.pathname === '/dashboard/add-company' ?
             <main id="skip">{children}</main>
-          :
+          : router.pathname === '/dashboard/create-team' ?
+            <main id="skip">{children}</main>
+          : 
             <div className="h-screen flex overflow-hidden">
               <AdminDesktopNav/>
               <div className="flex-1 overflow-auto focus:outline-none">
+                <StripeDisconnectNotice/>
                 <AdminMobileNav/>
                 <main className="flex-1 relative pb-8 z-0 overflow-y-auto">
                   <>
@@ -74,7 +72,7 @@ export default function Layout({ children, meta: pageMeta }) {
             </div>
         }
         {
-          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 &&
+          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 && router.pathname.indexOf('/dashboard/create-team') === -1 &&
           <Footer />
         }
       </>

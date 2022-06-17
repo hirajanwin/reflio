@@ -18,14 +18,12 @@ export default function InnerDashboardPage() {
     }
   }, [userFinderLoaded, user, activeCompany]);
 
-  if(activeCompany?.stripe_account_data === null){
+  if(activeCompany?.stripe_account_data === null || activeCompany?.stripe_id === null){
     router.replace(`/dashboard/${router?.query?.companyId}/setup`);
-  }
-
-  if(userCampaignDetails !== null && userCampaignDetails?.length > 0){
+  } else {
     router.replace(`/dashboard/${router?.query?.companyId}/campaigns`);
   }
-
+  
   return (
     <>
       <SEOMeta title="Dashboard"/>

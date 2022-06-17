@@ -24,17 +24,14 @@ async function buffer(readable) {
 const relevantEvents = new Set([
   'account.application.deauthorized',
   'account.updated',
-  'checkout.session.expired',
-  'checkout.session.completed'
+  'charge.succeeded'
 ]);
 
 const customerEvents = async (req, res) => {
   if (req.method === 'POST') {
     const buf = await buffer(req);
     const sig = req.headers['stripe-signature'];
-    const webhookSecret =
-      process.env.STRIPE_CUSTOMER_WEBHOOK_SECRET_LIVE ??
-      process.env.STRIPE_CUSTOMER_WEBHOOK_SECRET;
+    const webhookSecret = process.env.STRIPE_CUSTOMER_WEBHOOK_SECRET;
     let event;
 
     try {
@@ -43,6 +40,8 @@ const customerEvents = async (req, res) => {
       console.log(`❌ Error message: ${err.message}`);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
+
+    console.log(event?.data?.object);
 
     if (relevantEvents.has(event.type)) {
       try {
@@ -57,7 +56,7 @@ const customerEvents = async (req, res) => {
             await checkoutSessionComplete(event?.data?.object, event?.account);
             break;
           case 'account.application.deauthorized':
-            if(event.data.object?.name === 'Recover.so'){
+            if(event.data.object?.name === 'Reflio'){
               await deleteIntegrationFromDB(event?.account);
               break;
             } else {

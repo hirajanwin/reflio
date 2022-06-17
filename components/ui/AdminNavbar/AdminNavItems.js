@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import { useUser, handleActiveCompany } from '@/utils/useUser';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { classNames } from '@/utils/helpers';
 import { useCompany } from '@/utils/CompanyContext';
@@ -26,7 +27,7 @@ export default function AdminNavItems() {
     { name: 'Sales', href: `/dashboard/${activeCompany?.company_id}/sales`, icon: CurrencyDollarIcon },
     { name: 'Commissions', href: `/dashboard/${activeCompany?.company_id}/commissions`, icon: TableIcon },
     { name: 'Setup', href: `/dashboard/${activeCompany?.company_id}/setup`, icon: ClipboardCheckIcon },
-    { name: 'Settings', href: `/dashboard/${activeCompany?.company_id}/settings`, icon: CogIcon },
+    { name: 'Company Settings', href: `/dashboard/${activeCompany?.company_id}/settings`, icon: CogIcon },
   ];
 
   const secondaryNavigation = [
@@ -54,8 +55,8 @@ export default function AdminNavItems() {
                   <Listbox.Button className="relative w-full bg-white rounded-xl font-semibold pl-3 pr-10 py-3 flex text-left cursor-pointer focus:outline-none sm:text-sm border-2 border-gray-300">
                     <span className="relative w-5 h-5 rounded-full block mr-2">
                       {
-                        activeCompany?.display_image &&
-                        <Image src={activeCompany?.display_image} objectFit='contain' layout='fill' />
+                        activeCompany?.company_url &&
+                        <Image src={'https://s2.googleusercontent.com/s2/favicons?domain='+activeCompany?.company_url+''} objectFit='contain' layout='fill' />
                       }
                     </span>
                     <span className="block truncate">{activeCompany?.company_name}</span>
@@ -73,15 +74,15 @@ export default function AdminNavItems() {
                   >
                     <Listbox.Options
                       static
-                      className="top-0 left-0 absolute rounded-lg z-20 w-full bg-secondary max-h-60 pt-1 text-base overflow-auto focus:outline-none sm:text-sm border-2 border-secondary-2 shadow-xl shadow-secondary"
+                      className="top-0 left-0 absolute rounded-lg z-20 w-full bg-white max-h-60 text-base overflow-auto focus:outline-none sm:text-sm border-4 border-primary-2 shadow-xl shadow-secondary"
                     >
                       {userCompanyDetails?.map((company) => (
                         <Listbox.Option
                           key={company?.company_id}
                           className={({ selected, active }) =>
                             classNames(
-                              selected && 'text-primary py-2 pb-2',
-                              'cursor-pointer select-none relative py-2 pb-4 px-5 text-white'
+                              selected && 'bg-primary',
+                              'cursor-pointer select-none relative py-3 px-5 border-b-2'
                             )
                           }
                           value={company?.company_id}
@@ -102,10 +103,7 @@ export default function AdminNavItems() {
 
                               {selected ? (
                                 <span
-                                  className={classNames(
-                                    selected ? 'text-white' : 'text-primary',
-                                    'absolute inset-y-0 left-0 flex items-center pl-1.5'
-                                  )}
+                                  className="absolute inset-y-0 left-0 flex items-center pl-3"
                                 >
                                   <CheckIcon className="h-5 w-5" aria-hidden="true" />
                                 </span>
@@ -114,7 +112,7 @@ export default function AdminNavItems() {
                           )}
                         </Listbox.Option>
                       ))}
-                      <a href="/dashboard/add-company" className="block bg-white cursor-pointer select-none font-semibold relative py-3 px-5">
+                      <a href="/dashboard/add-company" className="block bg-gray-100 cursor-pointer select-none font-semibold relative py-3 px-5">
                         + Add Company
                       </a>
                     </Listbox.Options>
@@ -174,7 +172,7 @@ export default function AdminNavItems() {
             >
               Sign out
             </button>
-            <a className="items-center px-2 py-2 text-md font-semibold rounded-md" href="https://affiliates.reflio.com" target="_blank">Affiliate Dashboard</a>
+            <a className="items-center px-2 py-2 text-md font-semibold rounded-md" href={process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL} target="_blank">Affiliate Dashboard</a>
           </div>
         </div>
       </nav>

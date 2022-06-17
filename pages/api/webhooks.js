@@ -37,13 +37,10 @@ const webhookHandler = async (req, res) => {
   if (req.method === 'POST') {
     const buf = await buffer(req);
     const sig = req.headers['stripe-signature'];
-    const webhookSecret =
-      process.env.STRIPE_WEBHOOK_SECRET_LIVE ??
-      process.env.STRIPE_WEBHOOK_SECRET;
     let event;
 
     try {
-      event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
+      event = stripe.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET);
     } catch (err) {
       console.log(`❌ Error message: ${err.message}`);
       return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -84,8 +81,13 @@ const webhookHandler = async (req, res) => {
             throw new Error('Unhandled relevant event!');
         }
       } catch (error) {
-        console.log(error);
-        return res.json({ error: 'Webhook handler failed. View logs.' });
+        let errorString = error;
+        try {
+          errorString = JSON.stringify(errorString)
+        } catch (error) {
+          errorString = error;
+        }
+        return res.json({ error: error });
       }
     }
 

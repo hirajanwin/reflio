@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useUser } from '@/utils/useUser';
 import SetupProgress from '@/components/ui/SetupProgress'; 
-import { CopyBlock, googlecode } from "react-code-blocks";
+import { CopyBlock, monokaiSublime } from "react-code-blocks";
 import Button from '@/components/ui/Button'; 
 import SEOMeta from '@/components/SEOMeta'; 
 
@@ -17,7 +17,7 @@ export default function TrackingSetupPage() {
   }, [userFinderLoaded, user]);
 
   const embedCode = 
-  `<script async src='https://reflio.com/go.js' data-reflio='${router?.query?.companyId}'></script>`;
+  `<script async src='https://reflio.com/js/reflio.js' data-reflio='${router?.query?.companyId}'></script>`;
   
   return (
     <>
@@ -36,33 +36,34 @@ export default function TrackingSetupPage() {
         <div className="rounded-xl bg-white overflow-hidden shadow-lg border-4 border-gray-300 p-6">
           <div className="mb-5">
             <h2 className="text-xl font-semibold">Step 1: Installing the snippet on your website</h2>
-            <p className="text-lg mb-2">Paste the following JavaScript snippet into your website's <code className="text-lg text-pink-500">{`<head>`}</code> tag</p>
-            <pre className="w-full p-1 rounded-xl border-2 text-sm">
+            <p className="text-lg mb-2">Paste the following JavaScript snippet into your website's <code className="text-lg tracking-tight font-bold text-pink-500">{`<head>`}</code> tag</p>
+            <div className="w-full rounded-xl text-lg overflow-hidden shadow-lg">
               <CopyBlock
                 text={embedCode}
                 language='javascript'
                 showLineNumbers={false}
                 startingLineNumber={1}
-                theme={googlecode}
+                theme={monokaiSublime}
+                codeBlock
               /> 
-            </pre>
+            </div>
           </div>
           <div className="mb-10">
             <h2 className="text-xl font-semibold">Step 2: Tracking the conversion</h2>
-            <p className="text-lg mb-2">To track a referral conversion your website, you need to run the <code className="text-lg text-pink-500">{`reflio('convert)`}</code> function when you are creating the Stripe customer. This process usually happens on a thank you page, via the Stripe API in your backend or some other callback that occurs after the Stripe checkout has been completed.</p>
-            <pre className="w-full p-1 rounded-xl border-2 text-sm">
+            <p className="text-lg mb-2">To track a referral conversion your website, you need to run the <code className="text-lg tracking-tight font-bold text-pink-500">{`reflio('convert)`}</code> function when you are creating the Stripe customer. This process usually happens on a thank you page, via the Stripe API in your backend or some other callback that occurs after the Stripe checkout has been completed.</p>
+            <div className="w-full rounded-xl text-lg overflow-hidden shadow-lg">
               <CopyBlock
                 text={`reflio('convert', { email: 'yourcustomer@email.com' });`}
                 language='javascript'
                 showLineNumbers={false}
-                startingLineNumber={1}
-                theme={googlecode}
+                theme={monokaiSublime}
+                codeBlock
               /> 
-            </pre>
+            </div>
           </div>
           <div>
             <Button
-              small
+              large
               primary
               href={`/dashboard/${router?.query?.companyId}/setup/verify`}
             >

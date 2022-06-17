@@ -1,19 +1,38 @@
-import IframeResizer from 'iframe-resizer-react'
+import Image from 'next/image';
 
 export default function Testimonials() {
   return(
-    <div className="bg-white py-24 lg:py-32">
-      <div className="max-w-6xl mx-auto">
-        <div className="sm:flex sm:flex-col sm:align-center text-center mb-5">
-          <h2 className="text-4xl tracking-tight font-extrabold lg:text-5xl relative z-10 text-center">
-            Our early supporters
-          </h2>
+    <div id="testimonials">
+      <dl className="space-y-10 md:grid md:gap-y-20 md:space-y-0 md:grid-cols-2 md:gap-x-20">
+        <div>
+          <dt>
+            <img className="w-14 md:w-16 h-auto rounded-full mb-3" src="/testimonials/maxwellcdavis.jpeg"/>
+            <p className="text-xl md:text-2xl text-gray-700">Great stuff - a space that needs a cost effective product!</p>
+          </dt>
+          <dd className="mt-4 text-lg md:text-xl font-medium text-gray-500">@maxwellcdavis</dd>
         </div>
-        <IframeResizer
-          src="https://embed.testimonial.to/w/reflio?theme=light&card=base"
-          style={{ width: "1px", minWidth: "100%" }}
-        />
-      </div>
+        <div>
+          <dt>
+            <img className="w-14 md:w-16 h-auto rounded-full mb-3" src="/testimonials/foliofed.jpeg"/>
+            <p className="text-xl md:text-2xl text-gray-700">Reflio.com by @richiemcilroy is privacy conscious and doesn't break the bank. It's still in beta but I'm excited about it.</p>
+          </dt>
+          <dd className="mt-4 text-lg md:text-xl font-medium text-gray-500">@foliofed</dd>
+        </div>
+        <div>
+          <dt>
+            <img className="w-14 md:w-16 h-auto rounded-full mb-3" src="/testimonials/briansaetre.jpeg"/>
+            <p className="text-xl md:text-2xl text-gray-700">Fun idea. I've been looking for an affordable service like this too. Wasn't impressed by the market's current offerings the last time I looked. Great domain name too!</p>
+          </dt>
+          <dd className="mt-4 text-lg md:text-xl font-medium text-gray-500">@BrianSaetre</dd>
+        </div>
+        <div>
+          <dt>
+            <img className="w-14 md:w-16 h-auto rounded-full mb-3" src="/testimonials/_thunk_.jpeg"/>
+            <p className="text-xl md:text-2xl text-gray-700">Richie, I've just seen this thread on Reflio. Great idea and it looks mint!</p>
+          </dt>
+          <dd className="mt-4 text-lg md:text-xl font-medium text-gray-500">@_thunk_</dd>
+        </div>
+      </dl>
     </div>
   );
 }

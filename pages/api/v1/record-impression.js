@@ -34,22 +34,25 @@ const recordImpression = async (req, res) => {
     console.log("Could not parse body")
   }
   let filteredReferer = null;
-
   if(headers?.origin) {
     filteredReferer = headers.origin.replace(/(^\w+:|^)\/\//, '').replace('www.', '');
 
   } else {
+    console.log('1')
     return res.status(500).json({ statusCode: 500, referer: false });
   }
 
   try {
     if(filteredReferer !== null && body?.referralCode && body?.companyId){
+      console.log('2')
       const referralVerify = await verifyReferral(body?.referralCode, body?.companyId);
 
       if(referralVerify !== "error" && referralVerify?.affiliate_id && referralVerify?.campaign_id){
+        console.log('3')
         const impression = await fireRecordImpression(referralVerify?.affiliate_id);
 
         if(impression === "success"){
+          console.log('4')
           const referral = await createReferral(referralVerify);
 
           if(referral !== "error"){
@@ -59,6 +62,7 @@ const recordImpression = async (req, res) => {
       }
     }
 
+    
     return res.status(500).json({ statusCode: 500, verified: false });
 
   } catch (error) {

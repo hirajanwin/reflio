@@ -40,7 +40,7 @@ export default function AdminMobileNav() {
             leaveFrom="translate-x-0"
             leaveTo="-translate-x-full"
           >
-            <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gradient-to-b from-secondary to-secondary-2">
+            <div className="relative flex-1 flex flex-col max-w-xs w-full pt-5 pb-4 bg-gray-200">
               <Transition.Child
                 as={Fragment}
                 enter="ease-in-out duration-300"
@@ -76,9 +76,9 @@ export default function AdminMobileNav() {
         </Dialog>
       </Transition.Root>
 
-      <div className="relative z-10 flex-shrink-0 flex h-16 bg-gradient-to-b from-secondary to-secondary-2 border-b border-gray-200 lg:border-none lg:hidden">
+      <div className="relative z-10 flex-shrink-0 flex h-16 border-b-2 border-gray-200 lg:border-none lg:hidden">
         <button
-          className="px-4 border-r border-secondary-2 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 lg:hidden"
+          className="px-4 border-r-2 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-cyan-500 lg:hidden"
           onClick={() => setSidebarOpen(true)}
         >
           <span className="sr-only">Open sidebar</span>

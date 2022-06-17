@@ -1,13 +1,14 @@
 import { supabaseAdmin } from './supabase-admin';
 import { stripe } from './stripe';
 import { toDateTime } from './helpers';
+import { createCommission } from './stripe-helpers';
 
 // This entire file should be removed and moved to supabase-admin
 // It's not a react hook, so it shouldn't have useDatabase format
 // It should also properly catch and throw errors
-const upsertProductRecord = async (product) => {
+export const upsertProductRecord = async (product) => {
   const productData = {
-    id: product.id,
+    product_id: product.id,
     active: product.active,
     name: product.name,
     description: product.description,
@@ -22,7 +23,7 @@ const upsertProductRecord = async (product) => {
   console.log(`Product inserted/updated: ${product.id}`);
 };
 
-const upsertPriceRecord = async (price) => {
+export const upsertPriceRecord = async (price) => {
   const priceData = {
     id: price.id,
     product_id: price.product,
@@ -44,17 +45,17 @@ const upsertPriceRecord = async (price) => {
   console.log(`Price inserted/updated: ${price.id}`);
 };
 
-const createOrRetrieveCustomer = async ({ email, uuid }) => {
+export const createOrRetrieveCustomer = async ({ id, teamId, email }) => {
   const { data, error } = await supabaseAdmin
     .from('customers')
     .select('stripe_customer_id')
-    .eq('id', uuid)
+    .eq('team_id', teamId)
     .single();
   if (error) {
     // No customer record found, let's create one.
     const customerData = {
       metadata: {
-        supabaseUUID: uuid
+        supabaseTeamId: teamId
       }
     };
     if (email) customerData.email = email;
@@ -62,9 +63,9 @@ const createOrRetrieveCustomer = async ({ email, uuid }) => {
     // Now insert the customer ID into our Supabase mapping table.
     const { error: supabaseError } = await supabaseAdmin
       .from('customers')
-      .insert([{ id: uuid, stripe_customer_id: customer.id }]);
+      .insert([{ user_id: id, team_id: teamId, stripe_customer_id: customer.id }]);
     if (supabaseError) throw supabaseError;
-    console.log(`New customer created and inserted for ${uuid}.`);
+    console.log(`New customer created and inserted for ${teamId}.`);
     return customer.id;
   }
   if (data) return data.stripe_customer_id;
@@ -73,32 +74,32 @@ const createOrRetrieveCustomer = async ({ email, uuid }) => {
 /**
  * Copies the billing details from the payment method to the customer object.
  */
-const copyBillingDetailsToCustomer = async (uuid, payment_method) => {
+export const copyBillingDetailsToCustomer = async (teamId, payment_method) => {
   const customer = payment_method.customer;
   const { name, phone, address } = payment_method.billing_details;
   await stripe.customers.update(customer, { name, phone, address });
   const { error } = await supabaseAdmin
-    .from('users')
+    .from('teams')
     .update({
       billing_address: address,
       payment_method: payment_method[payment_method.type]
     })
-    .eq('id', uuid);
+    .eq('team_id', teamId);
   if (error) throw error;
 };
 
-const manageSubscriptionStatusChange = async (
+export const manageSubscriptionStatusChange = async (
   subscriptionId,
   customerId,
   createAction = false
 ) => {
-  // Get customer's UUID from mapping table.
+  // Get customer's teamId from mapping table.
   const {
-    data: { id: uuid },
+    data: { team_id: teamId, user_id: userId },
     error: noCustomerError
   } = await supabaseAdmin
     .from('customers')
-    .select('id')
+    .select('team_id, user_id')
     .eq('stripe_customer_id', customerId)
     .single();
   if (noCustomerError) throw noCustomerError;
@@ -108,8 +109,9 @@ const manageSubscriptionStatusChange = async (
   });
   // Upsert the latest status of the subscription object.
   const subscriptionData = {
+    user_id: userId,
     id: subscription.id,
-    user_id: uuid,
+    team_id: teamId,
     metadata: subscription.metadata,
     status: subscription.status,
     price_id: subscription.items.data[0].price.id,
@@ -138,19 +140,19 @@ const manageSubscriptionStatusChange = async (
     .insert([subscriptionData], { upsert: true });
   if (error) throw error;
   console.log(
-    `Inserted/updated subscription [${subscription.id}] for user [${uuid}]`
+    `Inserted/updated subscription [${subscription.id}] for team [${teamId}]`
   );
 
   // For a new subscription copy the billing details to the customer object.
   // NOTE: This is a costly operation and should happen at the very end.
   if (createAction && subscription.default_payment_method)
     await copyBillingDetailsToCustomer(
-      uuid,
+      teamId,
       subscription.default_payment_method
     );
 };
 
-const getCampaignData = async (companyId) => {
+export const getCampaignData = async (companyId) => {
   const { data, error } = await supabaseAdmin
     .from('campaigns')
     .select('*')
@@ -161,22 +163,6 @@ const getCampaignData = async (companyId) => {
 
   return data;
 }
-
-//New submission
-const addEmail = async (submissionId, submittedEmail) => {  
-  if(submissionId === null || submittedEmail === null) return "error";
-
-  const { error } = await supabaseAdmin
-    .from('submissions')
-    .update({
-      submitted_email: submittedEmail
-    })
-    .match({ submission_id: submissionId })
-
-  if(error) return "error";
-
-  return "success"
-};
 
 export const getAccountEmail = async (id) => {
   const { data } = await supabaseAdmin
@@ -225,6 +211,7 @@ export const getCompanyFromExternal = async (domain) => {
 export const inviteAffiliate = async (user, companyId, campaignId, emailInvites) => {
   const { error } = await supabaseAdmin.from('affiliates').insert({
     id: user?.id,
+    team_id: user?.team_id,
     company_id: companyId,
     campaign_id: campaignId,
     invite_email: emailInvites
@@ -239,7 +226,7 @@ export const inviteAffiliate = async (user, companyId, campaignId, emailInvites)
 
 export const verifyReferral = async (referralCode, companyId) => {
   let referralData = null;
-  let { data, error } = await supabaseAdmin
+  let { data } = await supabaseAdmin
     .from('affiliates')
     .select('*')
     .eq('company_id', companyId)
@@ -249,7 +236,7 @@ export const verifyReferral = async (referralCode, companyId) => {
   if(data){
     referralData = data;
   } else {
-    let { data, error } = await supabaseAdmin
+    let { data } = await supabaseAdmin
       .from('affiliates')
       .select('*')
       .eq('company_id', companyId)
@@ -261,8 +248,7 @@ export const verifyReferral = async (referralCode, companyId) => {
     }
   }
   
-  
-  if (error || referralData === null) {
+  if (referralData === null) {
     return "error";
   } else {
     return referralData;
@@ -305,6 +291,7 @@ export const createReferral = async (details) => {
 
     let referralData = { data, error } = await supabaseAdmin.from('referrals').insert({
       id: data?.id,
+      team_id: data?.team_id,
       affiliate_id: details?.affiliate_id,
       affiliate_code: details?.affiliate_code,
       campaign_id: data?.campaign_id,
@@ -331,11 +318,83 @@ export const createReferral = async (details) => {
   }
 };
 
-export {
-  upsertProductRecord,
-  upsertPriceRecord,
-  createOrRetrieveCustomer,
-  manageSubscriptionStatusChange,
-  addEmail
+export const campaignInfo = async (code, companyId) => {
+  let campaignData = null;
+  const referralVerify = await verifyReferral(code, companyId);
+
+  if(referralVerify === "error") return "error";
+
+  let { data, error } = await supabaseAdmin
+    .from('campaigns')
+    .select('campaign_name, discount_code, discount_value, discount_type, company_id')
+    .eq('campaign_id', referralVerify?.campaign_id)
+    .single();
+
+  if(error){
+    return "error";
+  }
+
+  if(data){
+    campaignData = data;
+  }
+  
+  let companyData = await supabaseAdmin
+    .from('companies')
+    .select('company_currency')
+    .eq('company_id', campaignData?.company_id)
+    .single();
+
+  if(companyData?.data !== null && companyData?.data?.company_currency){
+    campaignData.company_currency = companyData?.data?.company_currency;
+  }
+
+  console.log(companyData?.data)
+
+  return campaignData;
 };
 
+export const convertReferral = async (referralId, campaignId, affiliateId, cookieDate, email) => {
+  let referralData = await supabaseAdmin
+    .from('referrals')
+    .select('*')
+    .eq('referral_id', referralId)
+    .single();
+
+  if(referralData?.data && cookieDate){
+    let dateToday = new Date();
+    let dateTodayTimestamp = dateToday.getTime();
+    let cookieExpiryDate = new Date(cookieDate);
+    let cookieExpiryDateTimestamp = cookieExpiryDate.getTime();
+
+    if(dateTodayTimestamp > cookieExpiryDateTimestamp){
+      return "expired";
+    }
+
+    //Get stripe ID from company
+    let companyData = await supabaseAdmin
+      .from('companies')
+      .select('stripe_id')
+      .eq('company_id', referralData?.data?.company_id)
+      .single();
+
+    console.log("Stripe ID: ",companyData?.data?.stripe_id)
+
+    if(companyData?.data?.stripe_id){  
+      const commission = await createCommission(referralData, companyData?.data?.stripe_id, referralData?.data?.referral_id, email);
+      return commission;
+    }
+  }
+
+  return "error";
+};
+
+//Deletes stripe ID from company account
+export const deleteIntegrationFromDB = async (stripeId) => {
+  const { error } = await supabaseAdmin
+  .from('companies')
+  .update({
+    stripe_id: null
+  })
+  .eq({ stripe_id: stripeId })
+  if (error) return "error";
+};

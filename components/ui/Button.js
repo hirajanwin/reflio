@@ -4,16 +4,20 @@ const Button = (props) => {
 
   //Sizing styles
   if(props.small){
-    styles = styles + ' px-4 py-2 text-xs md:text-sm'
+    styles = styles + ' px-4 py-2 text-sm md:text-base'
   } else if(props.medium){
-    styles = styles + ' px-6 py-3 text-xs md:text-lg'
+    styles = styles + ' px-6 py-3 text-sm md:text-lg'
+  } else if(props.xlarge){
+    styles = styles + ' px-8 py-4 text-sm md:text-2xl'
   } else {
-    styles = styles + ' px-8 py-3 text-xs md:text-xl'
+    styles = styles + ' px-8 py-3 text-sm md:text-xl'
   }
 
   //Color styles
   if(props.secondary){
     styles = styles + ' text-white bg-secondary border-secondary-2 hover:bg-secondary-2'
+  } else if(props.gray){
+    styles = styles + ' text-gray-800 bg-gray-300 border-gray-400 hover:bg-gray-400'
   } else {
     styles = styles + ' bg-primary border-primary-2 hover:bg-primary-2'
   }

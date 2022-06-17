@@ -8,6 +8,9 @@ import SEOMeta from '@/components/SEOMeta';
 import Button from '@/components/ui/Button'; 
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import toast from 'react-hot-toast';
+import {
+  TemplateIcon
+} from '@heroicons/react/solid';
 
 export default function CampaignsPage() {
   const router = useRouter();
@@ -20,6 +23,14 @@ export default function CampaignsPage() {
       if (!user) router.replace('/signin');
     }
   }, [userFinderLoaded, user, activeCompany]);
+
+  const generateInviteUrl = (activeCampaign, companyHandle, campaignId) => {
+    if(activeCampaign === true){
+      return `${process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL}/invite/${companyHandle}`;
+    } else {
+      return `${process.env.NEXT_PUBLIC_AFFILIATE_SITE_URL}/invite/${companyHandle}/${campaignId}`;
+    }
+  };
   
   return (
     <>
@@ -63,13 +74,19 @@ export default function CampaignsPage() {
                             {userCampaignDetails?.map((campaign) => (
                               <tr key={campaign?.campaign_id} className="divide-x-4 divide-gray-200">
                                 <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-6">
+                                  {
+                                    campaign?.default_campaign === true &&
+                                    <div className="inline-flex items-center px-4 py-1 rounded-full text-xs font-semibold bg-secondary text-white mb-2">
+                                      Default Campaign
+                                    </div>
+                                  }
                                   <p className="text-xl mb-2 font-semibold"><a className="underline" href={`/dashboard/${router?.query?.companyId}/campaigns/${campaign?.campaign_id}`}>{campaign?.campaign_name}</a></p>
                                   <p className="text-md">{campaign?.commission_type === 'percentage' ? `${campaign?.commission_value}% commission on all paid referrals` : `${activeCompany?.company_currency}${campaign?.commission_value} commission on all paid referrals`}</p>
                                   <div className="mt-3">
                                     <p className="text-gray-500">
                                       <span>New affiliates can join at&nbsp;</span>
-                                      <CopyToClipboard text={`https://affiliates.reflio.com/invite/${campaign?.campaign_id}`} onCopy={() => toast.success('URL copied to clipboard')}>
-                                        <button className="font-semibold underline" href={`https://affiliates.reflio.com/invite/${campaign?.campaign_id}`}>{`https://affiliates.reflio.com/invite/${campaign?.campaign_id}`}</button>
+                                      <CopyToClipboard text={generateInviteUrl(campaign?.default_campaign, activeCompany?.company_handle, campaign?.campaign_id)} onCopy={() => toast.success('URL copied to clipboard')}>
+                                        <button className="font-semibold underline" href={generateInviteUrl(campaign?.default_campaign, activeCompany?.company_handle, campaign?.campaign_id)}>{generateInviteUrl(campaign?.default_campaign, activeCompany?.company_handle, campaign?.campaign_id)}</button>
                                       </CopyToClipboard>
                                     </p>
                                   </div> 
@@ -89,7 +106,13 @@ export default function CampaignsPage() {
               </div>
             :
               <div>
-                <p>You have no campaigns.</p>
+                <a
+                  href={`/dashboard/${router?.query?.companyId}/setup/campaign`}
+                  className="relative block w-full border-2 border-gray-300 border-dashed rounded-lg p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <TemplateIcon className="w-10 h-auto mx-auto text-gray-600"/>
+                  <span className="mt-2 block text-sm font-medium text-gray-600">Create a campaign</span>
+                </a>
               </div>
           :
             <LoadingDots/>

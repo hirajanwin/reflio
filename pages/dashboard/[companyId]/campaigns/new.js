@@ -29,7 +29,7 @@ export default function CreateCampaignPage() {
             <Button
               href={`/dashboard/${router?.query?.companyId}/campaigns`}
               small
-              secondary
+              gray
             >
               <ArrowNarrowLeftIcon className="mr-2 w-6 h-auto"/>
               <span>Back to campaigns</span>

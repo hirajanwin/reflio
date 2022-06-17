@@ -1,12 +1,16 @@
 import { useEffect, useState, createContext, useContext } from 'react';
 import { supabase } from './supabase-client';
+import { slugifyString } from '@/utils/helpers';
+import { useRouter } from 'next/router';
 
 export const UserContext = createContext();
 
 export const UserContextProvider = (props) => {
+  const router = useRouter();
   const [userLoaded, setUserLoaded] = useState(false);
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
+  const [team, setTeam] = useState(null);
   const [userFinderLoaded, setUserFinderLoaded] = useState(false);
   const [userDetails, setUserDetails] = useState(null);
   const [subscription, setSubscription] = useState(null);
@@ -29,7 +33,7 @@ export const UserContextProvider = (props) => {
       authListener.unsubscribe();
     };
   }, []);
-
+  const getTeam = () => supabase.from('teams').select('*').single();
   const getUserDetails = () => supabase.from('users').select('*').single();
   const getSubscription = () =>
     supabase
@@ -40,13 +44,14 @@ export const UserContextProvider = (props) => {
 
   useEffect(() => {
     if (user) {
-      Promise.allSettled([getUserDetails(), getSubscription()]).then(
+      Promise.allSettled([getTeam(), getUserDetails(), getSubscription()]).then(
         (results) => {
-          setUserDetails(results[0].value.data);
-          setSubscription(results[1].value.data);
+          setTeam(results[0].value.data);
+          setUserDetails(results[1].value.data);
+          setSubscription(results[2].value.data);
 
-          if(results[1].value.data){
-            setPlanDetails(results[1].value.data.prices.products.name);
+          if(results[2].value.data !== null){
+            setPlanDetails(results[2].value.data.prices.products.name);
           } else {
             setPlanDetails('free');
           }
@@ -58,16 +63,21 @@ export const UserContextProvider = (props) => {
     }
   }, [user]);
 
+  // if(user && session && team === null && router?.pathname !== '/dashboard/create-team'){
+  //   router.replace('/dashboard/create-team');
+  // }
+
   const value = {
     session,
     user,
+    team,
     userDetails,
     userLoaded,
     subscription,
     userFinderLoaded,
     planDetails,
-    signIn: (options) => supabase.auth.signIn(options, {redirectTo: 'https://reflio.com/dashboard'}),
-    signUp: (options) => supabase.auth.signUp(options, {redirectTo: 'https://reflio.com/dashboard'}),
+    signIn: (options) => supabase.auth.signIn(options, {redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`}),
+    signUp: (options) => supabase.auth.signUp(options, {redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`}),
     forgotPassword: (email) => supabase.auth.api.resetPasswordForEmail(email),
     signOut: () => {
       setUserDetails(null);
@@ -75,6 +85,7 @@ export const UserContextProvider = (props) => {
       return supabase.auth.signOut();
     }
   };
+
   return <UserContext.Provider value={value} {...props} />;
 };
 
@@ -115,6 +126,7 @@ export const getCampaigns = async (companyId) => {
   .from('campaigns')
   .select('*')
   .eq('company_id', companyId)
+  .order('created', { ascending: false })
 
   if(error) return error; 
   return data;
@@ -131,16 +143,59 @@ export const getAffiliates = async (companyId) => {
   return data;
 };
 
+//Create company
+export const newTeam = async (user, form) => {
+  if(!form?.team_name) return "error";
+
+  const { data } = await supabase.from('teams').insert({
+    id: user?.id,
+    team_name: form?.team_name
+  });
+
+  if(data && data[0]?.team_id){
+    const userUpdate = await supabase
+      .from('users')
+      .update({
+        team_id: data[0]?.team_id
+      })
+      .eq('id', user?.id);
+
+    if(userUpdate?.data && userUpdate?.data !== null){
+      const memberCreate = await supabase.from('members').insert({
+        id: user?.id,
+        team_id: data[0]?.team_id
+      });
+
+      console.log("memberCreate:")
+      console.log(memberCreate)
+    }
+
+    return "success";
+  }
+
+  return "error";
+};
+
 export const newCompany = async (user, form) => {
+  if(!form?.company_handle || !form?.company_url || !form?.company_name) return "error";
+
   const { data, error } = await supabase.from('companies').insert({
     id: user?.id,
+    team_id: user?.team_id,
     company_name: form?.company_name,
     company_url: form?.company_url,
+    company_handle: form?.company_handle,
     domain_verified: false
   });
 
+  console.log(error);
+
   if (error) {
-    throw error;
+    if(error?.code === "23505"){
+      return "duplicate"
+    }
+    
+    return "error";
   } else {
     return data;
   }
@@ -178,7 +233,52 @@ export const newCampaign = async (user, form, companyId) => {
   let formFields = form;
   formFields.id = user?.id;
   formFields.company_id = companyId;
+
+  if(formFields.commission_value && formFields.commission_value <= 0){
+    formFields.commission_value = 20;
+  }
+
+  if(formFields.cookie_window && formFields.cookie_window <= 0){
+    formFields.cookie_window = 60;
+  }
+
+  if(formFields.commission_period && formFields.commission_period <= 0){
+    formFields.commission_period = 12;
+  }
+
+  if(formFields.minimum_days_payout && formFields.minimum_days_payout <= 30){
+    formFields.minimum_days_payout = 30;
+  }
+
+  if(formFields.default_campaign){
+    formFields.default_campaign = true;
+  }
+
+  if(!formFields?.team_id){
+    formFields.team_id = user?.team_id;
+  }
+
+  let { data } = await supabase
+    .from('campaigns')
+    .select('*')
+    .eq('default_campaign', true)
+    .eq('company_id', companyId);
+
+  if(data?.length === 0){
+    formFields.default_campaign = true;
+  }
   
+  if(formFields.default_campaign && formFields.default_campaign === true && data?.length > 0){
+    data?.map(async campaign => {
+      await supabase
+        .from('campaigns')
+        .update({
+          default_campaign: false
+        })
+        .eq('campaign_id', campaign?.campaign_id);
+    })
+  }
+
   const { error } = await supabase.from('campaigns').insert(formFields);
 
   if (error) return "error";
@@ -186,15 +286,42 @@ export const newCampaign = async (user, form, companyId) => {
   return "success";
 };
 
-export const editCampaign = async (campaignId, form) => {  
-  const { error } = await supabase
-    .from('campaigns')
-    .update(form)
-    .eq('campaign_id', campaignId);
+export const editCampaign = async (campaignId, form) => { 
 
-  if (error) return "error";
+  if(form.default_campaign){
+    form.default_campaign = true;
 
-  return "success";
+    await supabase
+      .from('campaigns')
+      .update({
+        default_campaign: false
+      })
+      .eq('default_campaign', true);
+    
+    const { error } = await supabase
+      .from('campaigns')
+      .update(form)
+      .eq('campaign_id', campaignId);
+
+    console.log(error);
+  
+    if (error) return "error";
+  
+    return "success";
+
+  } else {
+    const { error } = await supabase
+      .from('campaigns')
+      .update(form)
+      .eq('campaign_id', campaignId);
+
+      console.log(error);
+  
+    if (error) return "error";
+  
+    return "success";
+  }
+
 };
 
 //New Stripe Account
@@ -257,45 +384,6 @@ export const editCurrency = async (companyId, data) => {
   return "success";
 };
 
-export const getSubmissions = async (userId, companyId, submissionId) => {
-  
-  if(companyId !== null){
-    const { data, error } = await supabase
-    .from('submissions')
-    .select('*')
-    .eq('company_id', companyId)
-    .eq('id', userId)
-    .order('created', { ascending: false })
-  
-    if(error) return error; 
-    return data;
-  }
-
-  if(submissionId !== null){
-    const { data, error } = await supabase
-    .from('submissions')
-    .select('*')
-    .eq('submission_id', submissionId)
-    .single();
-  
-    if(error) return error; 
-    return data;
-  }
-
-  if(submissionId === null && companyId === null){
-    const { data, error } = await supabase
-    .from('submissions')
-    .select('*')
-    .eq('id', userId)
-    .order('created', { ascending: false })
-  
-    if(error) return error; 
-    return data;
-  }
-
-  return null;
-};
-
 export const editCompanyWebsite = async (id, form) => {
   const { error } = await supabase
     .from('companies')
@@ -306,6 +394,29 @@ export const editCompanyWebsite = async (id, form) => {
     .match({ company_id: id })
 
     if (error) {
+      return "error";
+    } else {
+      return "success";
+    }
+};
+
+export const editCompanyHandle = async (id, form) => {
+  if(!form?.company_handle) return "error";
+  
+  const { error } = await supabase
+    .from('companies')
+    .update({ 
+      company_handle: slugifyString(form?.company_handle)
+    })
+    .match({ company_id: id })
+
+    if (error) {
+
+      if(error?.code === "23505"){
+        console.log("was duplicate!!!!!")
+        return "duplicate"
+      }
+      
       return "error";
     } else {
       return "success";

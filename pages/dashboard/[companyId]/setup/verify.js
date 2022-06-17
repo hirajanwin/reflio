@@ -22,7 +22,7 @@ export default function TrackingSetupPage() {
 
   const embedCode = 
   `<script>(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'reflio');</script>
- <script async src='https://reflio.com/go.js' data-reflio='${router?.query?.companyId}'></script>`;
+ <script async src='https://reflio.com/js/reflio.js' data-reflio='${router?.query?.companyId}'></script>`;
   
   return (
     <div>
@@ -62,7 +62,7 @@ export default function TrackingSetupPage() {
             {
               activeCompany?.domain_verified === true ?
                 <Button
-                  small
+                  large
                   primary
                   href={`/dashboard/${router?.query?.companyId}/campaigns`}
                 >
@@ -70,8 +70,8 @@ export default function TrackingSetupPage() {
                 </Button>
               :
                 <Button
-                  small
-                  secondary
+                  large
+                  primary
                   href={`http://${activeCompany?.company_url}?reflioVerify=true`}
                 >
                   <span>Verify on website</span>

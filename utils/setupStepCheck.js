@@ -8,7 +8,7 @@ export default function setupStepCheck() {
   const { userCampaignDetails } = useCampaign();
 
   if(activeCompany){
-    if(activeCompany?.stripe_account_data === null){
+    if(activeCompany?.stripe_account_data === null || activeCompany?.stripe_id === null){
       router.replace(`/dashboard/${router?.query?.companyId}/setup/stripe`);
     }
   
@@ -22,6 +22,10 @@ export default function setupStepCheck() {
   
     if(activeCompany?.stripe_account_data !== null && activeCompany?.stripe_id !== null && activeCompany?.company_currency !== null && userCampaignDetails !== null && userCampaignDetails?.length > 0){
       router.replace(`/dashboard/${router?.query?.companyId}/setup/add`);
+    }
+
+    if(activeCompany?.domain_verified === true){
+      router.replace(`/dashboard/${router?.query?.companyId}/setup/verify`);
     }
   }
   

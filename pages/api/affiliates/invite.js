@@ -19,7 +19,7 @@ const inviteUser = async (req, res) => {
 
       if(emailInvites && emailInvites?.includes(',')){
         emailInvitesSplit = emailInvites.split(',');
-        if(emailInvitesSplit?.length >= 10){
+        if(emailInvitesSplit?.length >= 30){
           return res.status(500).json({ response: 'limit reached' });
         }
       }

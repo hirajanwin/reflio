@@ -57,7 +57,7 @@ export default function AddCompany() {
               </div>
               <div className="pt-8 border-t-4">
                 <Button
-                  small
+                  large
                   primary
                   href={`/dashboard/${router?.query?.companyId}/setup/add`}
                 >
@@ -66,7 +66,7 @@ export default function AddCompany() {
               </div>
             </div>
           :
-            <CampaignForm/>
+            <CampaignForm setupMode={true}/>
         }
       </div>
     </>

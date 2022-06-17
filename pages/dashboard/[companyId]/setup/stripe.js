@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useUser } from '@/utils/useUser';
 import SetupProgress from '@/components/ui/SetupProgress'; 
+import Button from '@/components/ui/Button'; 
 import StripeConnect from '@/components/icons/StripeConnect'; 
 import { useCompany } from '@/utils/CompanyContext';
 import SEOMeta from '@/components/SEOMeta'; 
@@ -40,15 +41,22 @@ export default function StripeSetupPage() {
                   <p className="text-xl leading-6 font-semibold text-gray-900">Account name:</p>
                   <p>{activeCompany?.stripe_account_data?.business_profile?.name}</p>
                 </div>
-                <div>
+                <div className="mb-8 pb-8 border-b-4">
                   <p className="text-xl leading-6 font-semibold text-gray-900">Stripe ID:</p>
                   <p>{activeCompany?.stripe_id}</p>
                 </div>
+                <Button
+                  large
+                  primary
+                  href={`/dashboard/${router?.query?.companyId}/setup/currency`}
+                >
+                  <span>Next Step</span>
+                </Button>
               </div>
             :
               <div>
                 <a 
-                  href={`https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=read_only`}
+                  href={`https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}&scope=read_write`}
                   target="_blank"
                 >
                   <StripeConnect className="w-52 h-auto"/>

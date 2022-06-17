@@ -11,12 +11,6 @@ export const CompanyContextProvider = (props) => {
   let value;
 
   useEffect(() => {
-    if(userFinderLoaded){
-      if (!user) router.replace('/signin');
-    }
-  }, [userFinderLoaded, user]);
-
-  useEffect(() => {
     if (userFinderLoaded && getCompanies && user && userCompanyDetails === null) {
       Promise.allSettled([getCompanies(user?.id)]).then(
         (results) => {
@@ -26,7 +20,7 @@ export const CompanyContextProvider = (props) => {
     }
   });
 
-  if(userCompanyDetails !== null && userCompanyDetails?.length === 0 && !router?.asPath?.includes('add-company')){
+  if(userCompanyDetails !== null && userCompanyDetails?.length === 0 && !router?.asPath?.includes('add-company') && router?.pathname !== '/dashboard/create-team'){
     router.replace('/dashboard/add-company');
   }
   
