@@ -5,6 +5,7 @@ import {
   CurrencyDollarIcon,
   GlobeIcon,
   CreditCardIcon,
+  EyeIcon
 } from '@heroicons/react/outline';
 
 export default function Features() {
@@ -35,7 +36,7 @@ export default function Features() {
       icon: CurrencyDollarIcon
     },
     {
-      name: "Automated privacy & GDPR compliance",
+      name: "Automated GDPR & Privacy compliance",
       description: 'All data processed through European-owned infrastructure, and our company is registered in the UK. With Reflio, referrals located in the EU are automatically required to confirm their consent before a cookie is set.',
       active: true,
       icon: EyeOffIcon

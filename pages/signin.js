@@ -50,6 +50,8 @@ const SignIn = () => {
     }
   }, [user]);
 
+  router.replace('/');
+
   if (!user)
     return (
       <>
