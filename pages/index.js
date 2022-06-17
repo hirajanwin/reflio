@@ -44,8 +44,8 @@ export default function Index() {
           <div className="max-w-4xl mx-auto">
             <div className="mb-10">
               <div className="mb-7">
-                <h1 className="inline text-4xl lg:text-6xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-secondary to-secondary-2 tracking-tight">
-                  Create a referral program <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary-2 to-primary">without breaking the bank.</span>
+                <h1 className="inline text-4xl lg:text-6xl font-semibold md:text-transparent md:bg-clip-text md:bg-gradient-to-r from-secondary to-secondary-2 tracking-tight">
+                  Create a referral program <span className="inline md:text-transparent md:bg-clip-text md:bg-gradient-to-r md:from-secondary-2 md:to-primary">without breaking the bank.</span>
                 </h1>
               </div>
               <p className="text-xl sm:text-2xl text-gray-600 font-light">
