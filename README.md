@@ -12,6 +12,10 @@
 
 Reflio puts digital privacy first and is proudly open-source. All referrals are processed through European-owned infrastructure, and our company is registered in the UK. With Reflio, referrals located in the EU are automatically required to confirm their consent before a cookie is set.
 
+<di align="center">
+<img style="width: 75%; height: auto; margin: 0 auto; display: block;" src="https://reflio.com/platform-screenshot.webp" alt="Reflio Dashboard Screenshot"/>
+</div>
+
 ## Features / USPs
 
 - Start a referral program for your SaaS in minutes
