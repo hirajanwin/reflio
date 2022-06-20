@@ -30,7 +30,7 @@ export default function MyApp({ Component, pageProps }) {
     }
   }, []);
 
-  if(router.asPath.includes('sign') && router.asPath.includes('reflio.com')){
+  if(typeof window !== 'undefined' && window.location.href.includes('sign') && window.location.href.includes('reflio.com') && !window.location.href.includes('staging')){
     router.replace('/');
   }
 
