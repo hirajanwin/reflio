@@ -114,14 +114,14 @@ const SignUp = () => {
 
             <div>
               <button
-                disabled={true}
+                disabled={loading}
                 type="button"
                 className="group relative w-full flex justify-center py-3 px-5 border border-transparent text-md font-medium rounded-md text-white bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 "
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <LockClosedIcon className="h-5 w-5 " aria-hidden="true" />
                 </span>
-                Coming soon
+                Sign Up
               </button>
             </div>
 

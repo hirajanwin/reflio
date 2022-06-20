@@ -30,6 +30,10 @@ export default function MyApp({ Component, pageProps }) {
     }
   }, []);
 
+  if(router.asPath.includes('sign') && router.asPath.includes('reflio.com') && !router.asPath.includes('staging')){
+    router.replace('/');
+  }
+
   return (
     <>
       <SEOMeta/>

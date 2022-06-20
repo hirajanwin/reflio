@@ -12,6 +12,12 @@ export default function Features() {
 
   const features = [
     {
+      name: 'Pricing from $0/month',
+      description: "We're indie hacker friendly. Being indie hackers ourselves, we know that all new projects start from $0 MRR. Reflio starts from just $0/month with a 9% commission per successful referral.",
+      active: true,
+      icon: CurrencyDollarIcon
+    },
+    {
       name: 'Get started in minutes',
       description: 'Quickly connect your SaaS product to Reflio with pre-written code examples. You can instantly take advantage of word of mouth referrals to get higher quality sign ups to your app via your existing users.',
       active: true,
@@ -30,12 +36,6 @@ export default function Features() {
       icon: GlobeIcon
     },
     {
-      name: 'Pricing from $0/month',
-      description: "We're indie hacker friendly. Being indie hackers ourselves, we know that all new projects start from $0 MRR. Reflio starts from just $0/month with a 9% commission per successful referral.",
-      active: true,
-      icon: CurrencyDollarIcon
-    },
-    {
       name: "Automated GDPR & Privacy compliance",
       description: 'All data processed through European-owned infrastructure, and our company is registered in the UK. With Reflio, referrals located in the EU are automatically required to confirm their consent before a cookie is set.',
       active: true,
@@ -50,7 +50,7 @@ export default function Features() {
   ];
   
   return(
-    <div id="features">
+    <div id="why-reflio">
       <dl className="gap-y-10 grid grid-cols-1 gap-x-0 md:gap-y-20 md:grid-cols-2 md:gap-x-20">
         {features.map((feature) => (
           <div>
