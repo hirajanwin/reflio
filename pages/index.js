@@ -42,7 +42,7 @@ export default function Index() {
 
   return(
     <>
-      <div id="intro" className="relative py-14 md:py-24 bg-white md:bg-gradient-to-b md:from-gray-50 md:via-gray-200 md:to-primary">
+      <div id="intro" className="relative py-14 md:py-24 bg-white md:bg-gradient-to-b md:from-white md:via-gray-50 md:to-primary">
         <div className="wrapper text-center">
           <div className="max-w-4xl mx-auto">
             <div className="mb-10">
