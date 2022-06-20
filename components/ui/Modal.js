@@ -7,7 +7,7 @@ import {
 const Modal = (props) => {
   return(
     <Transition.Root show={props?.modalOpen} as={Fragment}>
-      <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={props?.setModalOpen}>
+      <Dialog as="div" className="fixed z-50 inset-0 overflow-y-auto" onClose={props?.setModalOpen}>
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
             as={Fragment}
@@ -18,7 +18,7 @@ const Modal = (props) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            <Dialog.Overlay className="fixed inset-0 bg-gray-700 bg-opacity-90 transition-opacity" />
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}

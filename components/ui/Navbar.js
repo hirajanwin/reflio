@@ -4,6 +4,7 @@ import Logo from '@/components/icons/Logo';
 import { useUser } from '@/utils/useUser';
 import Link from 'next/link';
 import Button from '@/components/ui/Button'; 
+import Github from '@/components/icons/Github'; 
 
 export default function Navbar() {
 
@@ -36,13 +37,7 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center">
               <nav className="flex items-center justify-center">
                 <a
-                  href="/#features"
-                  className={navClass}
-                >
-                  Features
-                </a>
-                <a
-                  href="/#pricing"
+                  href="/#why-reflio"
                   className={navClass}
                 >
                   Why Reflio
@@ -76,13 +71,16 @@ export default function Navbar() {
             {
               active &&
               <div className="origin-top-right absolute left-0 top-auto overflow-hidden mt-12 w-full shadow-xl border-t-4 border-gray-200 bg-white z-50">
-                <a className="block p-5 text-md bg:text-white hover:bg-gray-100 border-b-2 border-gray-200" href="/#features">Features</a>
+                <a className="block p-5 text-md bg:text-white hover:bg-gray-100 border-b-2 border-gray-200" href="/#why-reflio">Why Reflio</a>
                 <a className="block p-5 text-md bg:text-white hover:bg-gray-100 border-b-2 border-gray-200" href="/#pricing">Pricing</a>
-                <a className="block p-5 text-md bg:text-white hover:bg-gray-100 font-semibold" href={user ? '/dashboard' : '/#intro'}>{user ? 'Dashboard' : 'Get Updates' }</a>
+                <a className="block p-5 text-md bg:text-white hover:bg-gray-100 font-semibold" href={user ? '/dashboard' : '/#intro'}>{user ? 'Dashboard' : 'Join Waitlist' }</a>
               </div>
             }
 
             <div className="hidden lg:flex items-center">
+              <a className="mr-3"href="https://github.com/Reflio-com/reflio" target="_blank">
+                <Github className="w-auto h-6"/>
+              </a>
               {
                 user ?
                 <div className="flex-shrink-0">
@@ -101,7 +99,7 @@ export default function Navbar() {
                       primary
                       href="/#intro"
                     >
-                      <span>Get Updates</span>
+                      <span>Join Waitlist</span>
                     </Button>
                   </div>        
               }

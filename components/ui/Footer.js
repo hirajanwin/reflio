@@ -1,4 +1,5 @@
 import Logo from '@/components/icons/Logo';
+import Github from '@/components/icons/Github'; 
 
 export default function Footer() {
   return (
@@ -18,11 +19,12 @@ export default function Footer() {
         </div>
         <div className="mt-6">
           <p className="text-gray-500 text-sm">&copy; 2022 Reflio (McIlroy Limited).</p>
-          {/* <div className="flex items-center justify-start mt-2">
-            <a href="/privacy" className="hover:underline text-xs mx-1 text-gray-500 hover:text-gray-400">Privacy</a>
-            <a href="/terms" className="hover:underline text-xs mx-1 text-gray-500 hover:text-gray-400">Terms</a>
-            <a href="/changelog" className="hover:underline text-xs mx-1 text-gray-500 hover:text-gray-400">Changelog</a>
-          </div> */}
+          <div className="flex items-center justify-center mt-2">
+            <a href="https://github.com/Reflio-com/reflio" target="_blank">
+              <Github className="h-5 w-auto"/>
+            </a>
+            {/* <a href="/terms" className="hover:underline text-xs mx-1 text-gray-500 hover:text-gray-400">Terms</a> */}
+          </div>
         </div>
       </div>
     </footer>

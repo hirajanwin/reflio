@@ -107,7 +107,7 @@ const ForgotPassword = () => {
                   <div className="mt-3 text-center text-sm">
                     <span className="text-accents-2">Don't have an account?</span>
                     {` `}
-                    <Link href="/signup">
+                    <Link href="/#intro">
                       <a className="text-accents-1 font-bold hover:underline cursor-pointer">
                         Sign up.
                       </a>
@@ -161,7 +161,7 @@ const ForgotPassword = () => {
                   <div className="mt-3 text-center text-sm">
                     <span className="text-accents-2">Don't have an account?</span>
                     {` `}
-                    <Link href="/signup">
+                    <Link href="/#intro">
                       <a className="text-accents-1 font-bold hover:underline cursor-pointer">
                         Sign up.
                       </a>

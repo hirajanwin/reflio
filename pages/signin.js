@@ -50,8 +50,6 @@ const SignIn = () => {
     }
   }, [user]);
 
-  router.replace('/');
-
   if (!user)
     return (
       <>
@@ -103,7 +101,7 @@ const SignIn = () => {
                 <div className="text-center text-sm">
                   <a
                     href="#"
-                    className="font-medium hover:underline text-primary"
+                    className="font-medium hover:underline"
                     onClick={() => {
                       if (showPasswordInput) setPassword('');
                       setShowPasswordInput(!showPasswordInput);
@@ -155,7 +153,7 @@ const SignIn = () => {
                   <span className="ml-2">Sign in with Twitter</span>
                 </button>
                  */}
-                <button
+                {/* <button
                   type="button"
                   className="flex align-center justify-center h-full min-h-full w-full font-medium rounded-lg m-0 p-3 px-5 border-2 hover:bg-accents-9 bg-white text-primary"
                   disabled={loading}
@@ -163,19 +161,14 @@ const SignIn = () => {
                 >
                   <Google />
                   <span className="ml-2">Sign in with Google</span>
-                </button>
+                </button> */}
 
-                {message.content && (
-                  <div
-                    className={`${
-                      message.type === 'error' ? 'text-pink' : 'text-green'
-                    } border ${
-                      message.type === 'error' ? 'border-pink' : 'border-green'
-                    } p-3`}
-                  >
+                {
+                  message.content &&
+                  <div className="p-5 rounded-xl bg-gray-100 border-2 border-gray-300 border-dashed text-center">
                     {message.content}
                   </div>
-                )}
+                }
               </form>
             </div>
           </div>

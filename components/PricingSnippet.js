@@ -35,7 +35,7 @@ export default function PricingSnippet() {
                 <li className="text-xl font-semibold">1 free company</li>
               </ul>
               <a
-                href="/signup"
+                href="/#intro"
                 className="inline-block border-4 border-gray-400 rounded-xl bg-gray-300 hover:bg-gray-400 text-lg px-6 font-semibold py-3 transition-all"
               >
                 Get Started

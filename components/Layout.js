@@ -12,6 +12,27 @@ export default function Layout({ children, meta: pageMeta }) {
   const SimpleNav = dynamic(() => import('@/components/ui/SimpleNav'));
   const StripeDisconnectNotice = dynamic(() => import('@/components/ui/StripeDisconnectNotice'));
   const router = useRouter();
+  let defaultPage = true;
+  let dashboardPage = false;
+  let simplePage = false;
+
+  if(router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 && router.pathname.indexOf('/dashboard/create-team') === -1){
+    defaultPage = true;
+    dashboardPage = false;
+    simplePage = false;
+  }
+
+  if(router.pathname === '/dashboard/add-company' || router.pathname === '/dashboard/create-team'){
+    defaultPage = false;
+    dashboardPage = false;
+    simplePage = true;
+  }
+
+  if(router.pathname.indexOf('/dashboard') > -1 && simplePage !== true){
+    defaultPage = false;
+    dashboardPage = true;
+    simplePage = false;
+  }
 
   return (
     <>
@@ -43,21 +64,19 @@ export default function Layout({ children, meta: pageMeta }) {
           }}
         />
         {
-          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 && router.pathname.indexOf('/dashboard/create-team') === -1 &&
+          defaultPage === true &&
           <Navbar />
         }
         { 
-          router.pathname === '/dashboard/add-company' || router.pathname === '/dashboard/create-team' &&
+          simplePage === true &&
           <SimpleNav/>
         }
         {
-          router.pathname.indexOf('/dashboard') === -1 ?
+          defaultPage === true ?
             <main id="skip">{children}</main>
-          : router.pathname === '/dashboard/add-company' ?
+          : simplePage === true ?
             <main id="skip">{children}</main>
-          : router.pathname === '/dashboard/create-team' ?
-            <main id="skip">{children}</main>
-          : 
+          : dashboardPage === true ?
             <div className="h-screen flex overflow-hidden">
               <AdminDesktopNav/>
               <div className="flex-1 overflow-auto focus:outline-none">
@@ -70,9 +89,10 @@ export default function Layout({ children, meta: pageMeta }) {
                 </main>
               </div>
             </div>
+          : <main id="skip">{children}</main>
         }
         {
-          router.pathname.indexOf('/dashboard') === -1 && router.pathname.indexOf('/dashboard/add-company') === -1 && router.pathname.indexOf('/dashboard/create-team') === -1 &&
+          defaultPage === true &&
           <Footer />
         }
       </>
